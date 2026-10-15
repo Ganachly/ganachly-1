@@ -68,7 +68,7 @@ function renderProductGridItems(filtered) {
             
             <!-- Thumbnail & Badges -->
             <div class="relative h-44 w-full overflow-hidden bg-espresso-panel cursor-pointer" onclick="window.openProductDetailModal('${product.id}')">
-              <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="${product.image}" alt="${product.title}" loading="lazy">
+              <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="${product.image}" alt="${product.title}" loading="lazy" decoding="async">
               <div class="absolute inset-0 bg-gradient-to-t from-card-surface/80 via-transparent to-transparent"></div>
               
               ${product.badge ? `
@@ -131,7 +131,7 @@ export function renderMenuPage() {
   const filtered = getFilteredProducts();
 
   return `
-    <main class="w-full pt-24 bg-surface min-h-screen pb-16">
+    <main class="w-full pt-16 sm:pt-24 bg-surface min-h-screen pb-16">
       <div class="flex flex-col w-full max-w-[1240px] mx-auto px-4 sm:px-6">
         
         <!-- Clean Header -->
@@ -142,7 +142,7 @@ export function renderMenuPage() {
         </div>
 
         <!-- Sticky Filter & Search Bar -->
-        <div class="sticky top-20 z-30 py-2.5 -mx-4 sm:-mx-6 px-4 sm:px-6 bg-espresso-deep/90 backdrop-blur-xl border-y border-primary/10 mb-5">
+        <div class="sticky top-16 sm:top-20 z-30 py-2.5 -mx-4 sm:-mx-6 px-4 sm:px-6 bg-espresso-deep/90 backdrop-blur-xl border-y border-primary/10 mb-5">
           <div class="max-w-[1240px] mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
             
             <!-- Category Pills -->

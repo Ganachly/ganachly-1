@@ -98,7 +98,7 @@ export function renderCartDrawer() {
                   class="w-full px-3 py-2 rounded-lg bg-espresso-panel border border-outline-variant/40 text-on-surface font-body-sm text-body-sm focus:outline-none focus:border-primary resize-none">${patronAddress}</textarea>
               </div>
 
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
                   <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Patron Name</label>
                   <input type="text" id="checkoutNameInput" value="${patronName}" placeholder="Full Name"
@@ -125,7 +125,7 @@ export function renderCartDrawer() {
 
               <div>
                 <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Payment Method</label>
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <label class="flex items-center gap-2 p-2 rounded-lg bg-espresso-panel border border-primary/30 cursor-pointer">
                     <input type="radio" name="paymentMethod" value="upi" checked class="accent-primary">
                     <span class="font-body-sm text-xs text-gold-cream">Instant UPI / QR</span>

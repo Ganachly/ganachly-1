@@ -162,9 +162,9 @@ export function renderMyOrdersPage() {
                       Live Confectionery Lifecycle
                     </span>
 
-                    <div class="grid grid-cols-5 gap-2 relative">
+                    <div class="grid grid-cols-5 gap-1 sm:gap-2 relative">
                       <!-- Connecting Line -->
-                      <div class="absolute top-5 left-[10%] right-[10%] h-0.5 bg-surface-container-high -z-0">
+                      <div class="absolute top-4 sm:top-5 left-[8%] right-[8%] h-0.5 bg-surface-container-high -z-0">
                         <div class="h-full bg-primary transition-all duration-700" style="width: ${(currentStageIndex / (stages.length - 1)) * 100}%"></div>
                       </div>
 
@@ -173,14 +173,14 @@ export function renderMyOrdersPage() {
                         const isCurrent = idx === currentStageIndex;
                         return `
                           <div class="flex flex-col items-center text-center relative z-10">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all ${
                               isCurrent 
-                                ? 'bg-primary text-espresso-deep ring-4 ring-primary/30 scale-110 shadow-lg' 
+                                ? 'bg-primary text-espresso-deep ring-2 sm:ring-4 ring-primary/30 scale-105 sm:scale-110 shadow-lg' 
                                 : (isDone ? 'bg-primary-container text-espresso-deep' : 'bg-surface-container-high text-on-surface-variant/40')
                             }">
-                              <span class="material-symbols-outlined text-[18px]">${st.icon}</span>
+                              <span class="material-symbols-outlined text-[14px] sm:text-[18px]">${st.icon}</span>
                             </div>
-                            <span class="font-body-sm text-[11px] mt-2 font-medium leading-tight ${isCurrent ? 'text-gold-light font-bold' : (isDone ? 'text-on-surface' : 'text-on-surface-variant/50')}">
+                            <span class="font-body-sm text-[9px] sm:text-[11px] mt-1.5 sm:mt-2 font-medium leading-tight ${isCurrent ? 'text-gold-light font-bold' : (isDone ? 'text-on-surface' : 'text-on-surface-variant/50')}">
                               ${st.label}
                             </span>
                           </div>

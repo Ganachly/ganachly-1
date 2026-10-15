@@ -13,14 +13,14 @@ export function openProductDetailModal(productId) {
   }
 
   modalEl.innerHTML = `
-    <div id="productModalBackdrop" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-      <div class="relative w-full max-w-lg bg-espresso-panel border border-primary/30 rounded-2xl overflow-hidden shadow-2xl modal-fade-in">
+    <div id="productModalBackdrop" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div class="relative w-full max-w-lg bg-espresso-panel border border-primary/30 rounded-2xl overflow-hidden shadow-2xl modal-fade-in max-h-[92vh] overflow-y-auto my-auto">
         
-        <button id="closeProductDetailModal" class="absolute top-4 right-4 z-10 p-2 rounded-xl bg-black/60 text-gold-cream hover:bg-black transition-all">
+        <button id="closeProductDetailModal" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 p-2 rounded-xl bg-black/60 text-gold-cream hover:bg-black transition-all">
           <span class="material-symbols-outlined text-[20px]">close</span>
         </button>
 
-        <div class="h-60 w-full relative bg-espresso-deep">
+        <div class="h-44 sm:h-60 w-full relative bg-espresso-deep">
           <img src="${product.image}" alt="${product.title}" class="w-full h-full object-cover">
           <div class="absolute inset-0 bg-gradient-to-t from-espresso-panel via-transparent to-transparent"></div>
           ${product.badge ? `

@@ -49,49 +49,62 @@ function renderOrderRow(order) {
   const elapsedStr = elapsed < 1 ? 'Just now' : (elapsed < 60 ? `${elapsed}m ago` : `${Math.floor(elapsed / 60)}h ago`);
 
   return `
-    <div class="order-row grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-3 px-4 py-3 rounded-xl bg-card-surface/80 border border-outline-variant/20 hover:bg-surface-container-high transition-all group" data-order-id="${order.id}">
-      <!-- Channel + ID -->
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-primary text-[16px]">${channelIcon}</span>
+    <div class="order-row flex flex-col sm:grid sm:grid-cols-[auto_1fr_auto_auto_auto] items-stretch sm:items-center gap-2.5 sm:gap-3 p-3 sm:px-4 sm:py-3 rounded-xl bg-card-surface/80 border border-outline-variant/20 hover:bg-surface-container-high transition-all group" data-order-id="${order.id}">
+      
+      <!-- Top Section on Mobile (Channel + ID + Customer + Price) -->
+      <div class="flex items-center justify-between sm:contents">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary text-[16px]">${channelIcon}</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-body-sm text-[11px] font-mono text-primary font-bold">#${order.id}</span>
+            <span class="text-[10px] text-on-surface-variant">${elapsedStr}</span>
+          </div>
         </div>
-        <div class="hidden md:flex flex-col">
-          <span class="font-body-sm text-[11px] font-mono text-primary">#${order.id}</span>
-          <span class="text-[10px] text-on-surface-variant">${elapsedStr}</span>
+
+        <div class="sm:hidden text-right">
+          <span class="font-label-price text-sm font-bold text-primary">₹${order.total}</span>
+          <span class="text-[10px] text-on-surface-variant capitalize block">${order.paymentMethod || 'UPI'}</span>
         </div>
       </div>
 
       <!-- Customer + Items -->
-      <div class="min-w-0">
+      <div class="min-w-0 flex-1">
         <div class="flex items-center gap-2">
-          <span class="font-body-md text-body-md font-bold text-on-surface truncate">${order.customerName}</span>
+          <span class="font-body-md text-sm sm:text-body-md font-bold text-on-surface truncate">${order.customerName}</span>
+          <span class="text-[10px] text-gold-light/80 font-mono sm:hidden">• ${order.zone || 'Faridabad'}</span>
           <span class="hidden lg:block text-[10px] text-on-surface-variant font-mono">${order.zone || '—'}</span>
         </div>
-        <p class="text-[11px] text-on-surface-variant truncate">${itemSummary || '—'}</p>
+        <p class="text-[11px] text-on-surface-variant truncate mt-0.5">${itemSummary || '—'}</p>
       </div>
 
-      <!-- Total -->
-      <div class="flex flex-col items-end">
+      <!-- Total (Desktop) -->
+      <div class="hidden sm:flex flex-col items-end">
         <span class="font-label-price text-sm font-bold text-primary">₹${order.total}</span>
         <span class="text-[10px] text-on-surface-variant capitalize">${order.paymentMethod || 'UPI'}</span>
       </div>
 
-      <!-- Stage badge + selector -->
-      <div class="flex items-center gap-2">
-        <span class="px-2 py-0.5 rounded-full text-[9px] font-label-badge uppercase font-bold ${stageObj.color} whitespace-nowrap">
-          ${stageObj.label}
-        </span>
-        <select class="order-stage-select bg-surface-container-low text-gold-cream text-xs rounded-lg px-2 py-1.5 focus:outline-none cursor-pointer border border-outline-variant/20" data-order-id="${order.id}">
-          ${STAGES.map(s => `<option value="${s.key}" ${order.stage === s.key ? 'selected' : ''}>${s.label}</option>`).join('')}
-        </select>
+      <!-- Bottom Controls on Mobile (Stage badge + selector + Actions) -->
+      <div class="flex items-center justify-between sm:justify-start gap-2 pt-2 sm:pt-0 border-t border-primary/10 sm:border-0">
+        <div class="flex items-center gap-1.5 flex-1 sm:flex-initial">
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-label-badge uppercase font-bold ${stageObj.color} whitespace-nowrap hidden sm:inline-block">
+            ${stageObj.label}
+          </span>
+          <select class="order-stage-select bg-surface-container-low text-gold-cream text-xs rounded-lg px-2 py-1.5 focus:outline-none cursor-pointer border border-outline-variant/20 w-full sm:w-auto" data-order-id="${order.id}">
+            ${STAGES.map(s => `<option value="${s.key}" ${order.stage === s.key ? 'selected' : ''}>${s.label}</option>`).join('')}
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-1.5">
+          <button class="btn-print-slip p-1.5 rounded-lg bg-surface-container hover:bg-surface-bright text-on-surface-variant hover:text-primary transition-all flex items-center gap-1 text-xs" data-order-id="${order.id}" title="Print kitchen slip">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            <span class="sm:hidden text-[10px] uppercase font-label-badge">Slip</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Actions -->
-      <div class="flex items-center gap-1.5">
-        <button class="btn-print-slip p-1.5 rounded-lg bg-surface-container hover:bg-surface-bright transition-all" data-order-id="${order.id}" title="Print kitchen slip">
-          <span class="material-symbols-outlined text-[16px] text-on-surface-variant">print</span>
-        </button>
-      </div>
     </div>
   `;
 }

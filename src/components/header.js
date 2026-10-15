@@ -24,14 +24,14 @@ export function renderStorefrontHeader(activeRoute = '#/') {
       </div>
 
       <!-- Main Navigation Strip -->
-      <div class="h-20 max-w-[1280px] mx-auto px-margin md:px-margin-desktop flex items-center justify-between gap-space-md">
+      <div class="h-16 sm:h-20 max-w-[1280px] mx-auto px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 sm:gap-4">
         
         <!-- Brand Monogram -->
-        <div class="flex items-center gap-space-md">
-          <a class="flex items-center gap-space-sm group" href="#/">
-            <img alt="Ganachly Monogram Logo" class="h-8 w-auto object-contain transition-transform group-hover:scale-105" 
+        <div class="flex items-center gap-2 sm:gap-space-md">
+          <a class="flex items-center gap-2 group" href="#/">
+            <img alt="Ganachly Monogram Logo" class="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-105" 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmKKxb9G0vCEynbGo92kEm76euV2guavQqyVY_OpM9mOgeWCBTfou1JHMYPtETOGOkdfxQSmwWrLT9SLHa0GvdJeucLjrTjVi32WzE61zZh0WNguRwjx1IVq06b4ejtFlDeQBc-_VMkUnX0BNpLhLaTf_JkSS771STZwpLGP8FKb-DjO5fuU019WjoGFX5nrT7ASIlNPWfjmQnU5cZc8S7XSN268HHkw1vxGByeW4hkaBmFOgfLgtNWw"/>
-            <span class="font-headline-md text-headline-md tracking-wider text-primary group-hover:text-gold-light transition-colors">
+            <span class="font-headline-md tracking-wider text-primary group-hover:text-gold-light transition-colors text-base sm:text-xl md:text-2xl">
               GANACHLY
             </span>
           </a>

@@ -17,11 +17,11 @@ export function renderProfileModal() {
   const isAdmin = currentUser && currentUser.role === 'admin';
 
   modalEl.innerHTML = `
-    <div id="identityModalBackdrop" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div class="relative w-full max-w-2xl bg-espresso-panel border border-primary/25 rounded-2xl p-6 md:p-8 shadow-2xl modal-fade-in my-8 text-on-surface">
+    <div id="identityModalBackdrop" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div class="relative w-full max-w-2xl bg-espresso-panel border border-primary/25 rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl modal-fade-in my-4 sm:my-8 text-on-surface">
         
         <!-- Close Button -->
-        <button id="closeProfileModalBtn" class="absolute top-5 right-5 p-2 rounded-xl bg-surface-container-high text-on-surface-variant hover:text-gold-cream hover:bg-surface-bright transition-all" title="Close Profile">
+        <button id="closeProfileModalBtn" class="absolute top-4 right-4 sm:top-5 sm:right-5 p-2 rounded-xl bg-surface-container-high text-on-surface-variant hover:text-gold-cream hover:bg-surface-bright transition-all" title="Close Profile">
           <span class="material-symbols-outlined text-[20px]">close</span>
         </button>
 

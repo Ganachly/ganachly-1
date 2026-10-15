@@ -61,9 +61,17 @@ export function attachAdminHeaderEvents() {
 
   const mobileToggle = document.getElementById('adminMobileSidebarToggle');
   const sidebar = document.getElementById('adminSidebar');
+  const backdrop = document.getElementById('adminSidebarBackdrop');
   if (mobileToggle && sidebar) {
     mobileToggle.onclick = () => {
-      sidebar.classList.toggle('-translate-x-full');
+      const isClosed = sidebar.classList.contains('-translate-x-full');
+      if (isClosed) {
+        sidebar.classList.remove('-translate-x-full');
+        if (backdrop) backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        if (backdrop) backdrop.classList.add('hidden');
+      }
     };
   }
 }

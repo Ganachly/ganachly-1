@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getAnalytics, isSupported as isAnalyticsSupported } from 'firebase/analytics';
 import {
   getFirestore,
   initializeFirestore,
@@ -63,14 +62,19 @@ try {
 }
 export const db = firestoreDb;
 
-// Initialize Firebase Analytics safely for browser environments
+// Initialize Firebase Analytics non-blockingly after initial paint
 export let analytics = null;
 if (typeof window !== 'undefined') {
-  isAnalyticsSupported().then((supported) => {
-    if (supported) {
-      analytics = getAnalytics(app);
-    }
-  }).catch(() => {});
+  setTimeout(() => {
+    import('firebase/analytics').then(({ getAnalytics, isSupported }) => {
+      isSupported().then((supported) => {
+        if (supported) {
+          analytics = getAnalytics(app);
+          console.debug('[Firebase] Analytics initialized non-blockingly.');
+        }
+      }).catch(() => {});
+    }).catch(() => {});
+  }, 1200);
 }
 
 import {

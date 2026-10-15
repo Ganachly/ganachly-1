@@ -100,6 +100,8 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
           </div>
         </div>
 
+        </div>
+
         <div>
           <a href="#/" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-surface-container-high hover:bg-surface-bright text-gold-cream hover:text-primary transition-all text-xs font-label-action uppercase tracking-wider">
             <span class="material-symbols-outlined text-[16px]">visibility</span>
@@ -108,15 +110,32 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
         </div>
       </div>
     </aside>
+    <!-- Mobile Backdrop -->
+    <div id="adminSidebarBackdrop" class="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm md:hidden hidden transition-opacity"></div>
   `;
 }
 
 export function attachAdminSidebarEvents() {
   const closeBtn = document.getElementById('closeAdminSidebarMobile');
   const sidebar = document.getElementById('adminSidebar');
-  if (closeBtn && sidebar) {
-    closeBtn.onclick = () => {
-      sidebar.classList.add('-translate-x-full');
-    };
+  const backdrop = document.getElementById('adminSidebarBackdrop');
+
+  const closeSidebar = () => {
+    if (sidebar) sidebar.classList.add('-translate-x-full');
+    if (backdrop) backdrop.classList.add('hidden');
+  };
+
+  if (closeBtn) closeBtn.onclick = closeSidebar;
+  if (backdrop) backdrop.onclick = closeSidebar;
+
+  // Auto-close on mobile when clicking any navigation link
+  if (sidebar) {
+    sidebar.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth < 768) {
+          closeSidebar();
+        }
+      });
+    });
   }
 }
