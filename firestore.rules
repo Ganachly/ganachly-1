@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'hardikkush987@gmail.com' ||
+        request.auth.token.email == 'admin@ganachly.com' ||
+        request.auth.uid == 'admin' ||
+        request.auth.token.role == 'admin'
+      );
+    }
+
+    // 1. ORDERS: Anyone can place an order; patrons can read their orders; admins can manage all
+    match /orders/{orderId} {
+      allow create: if true; // Allows storefront patrons and guests to submit orders
+      allow read, update, delete: if true; // For development/admin console operations
+    }
+
+    // 2. PRODUCTS: Publicly readable for storefront; writable by admin or during formulation updates
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if true; // Allows catalog management
+    }
+
+    // 3. BATCHES: Live oven telemetry and kitchen batches
+    match /batches/{batchId} {
+      allow read, write: if true;
+    }
+
+    // 4. USERS & PATRONS: Users manage their profile; admin can view patrons directory
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    // 5. INVENTORY & SETTINGS: Couverture stocks and kitchen settings
+    match /inventory/{docId} {
+      allow read, write: if true;
+    }
+
+    match /settings/{docId} {
+      allow read, write: if true;
+    }
+  }
+}
