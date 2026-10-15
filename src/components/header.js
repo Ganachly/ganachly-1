@@ -1,4 +1,4 @@
-import { store } from '../state/store.js';
+﻿import { store } from '../state/store.js';
 
 export function renderStorefrontHeader(activeRoute = '#/') {
   const user = store.getCurrentUser();
@@ -15,12 +15,12 @@ export function renderStorefrontHeader(activeRoute = '#/') {
 
   return `
     <header class="fixed top-0 left-0 right-0 z-50 bg-espresso-deep/90 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
-      <!-- Announcement / Delivery Guarantee Bar -->
+      <!-- Announcement Bar -->
       <div class="bg-surface-container-lowest text-center py-space-xs px-margin border-b border-primary/10 flex items-center justify-center gap-2">
         <p class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream uppercase tracking-wider text-[11px] truncate">
-          📍 Fresh evening bakes dispatched across Delhi NCR (Faridabad, Gurugram, Noida, Delhi, Ghaziabad)
+          ✦ Handcrafted in Small Batches · 100% Eggless · 70.5% Belgian Callebaut Couverture
         </p>
-        <span class="hidden md:inline text-primary text-[10px]">• 100% Eggless 70.5% Couverture</span>
+        <span class="hidden md:inline text-primary text-[10px]">• Order via WhatsApp</span>
       </div>
 
       <!-- Main Navigation Strip -->
@@ -31,8 +31,8 @@ export function renderStorefrontHeader(activeRoute = '#/') {
           <a class="flex items-center gap-2 group" href="#/">
             <img alt="Ganachly Monogram Logo" class="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-105" 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmKKxb9G0vCEynbGo92kEm76euV2guavQqyVY_OpM9mOgeWCBTfou1JHMYPtETOGOkdfxQSmwWrLT9SLHa0GvdJeucLjrTjVi32WzE61zZh0WNguRwjx1IVq06b4ejtFlDeQBc-_VMkUnX0BNpLhLaTf_JkSS771STZwpLGP8FKb-DjO5fuU019WjoGFX5nrT7ASIlNPWfjmQnU5cZc8S7XSN268HHkw1vxGByeW4hkaBmFOgfLgtNWw"/>
-            <span class="font-headline-md tracking-wider text-primary group-hover:text-gold-light transition-colors text-base sm:text-xl md:text-2xl">
-              GANACHLY
+            <span class="font-brittany text-primary group-hover:text-gold-light transition-colors text-2xl sm:text-3xl md:text-4xl leading-none pt-1 select-none">
+              Ganachly
             </span>
           </a>
         </div>

@@ -101,7 +101,9 @@ export default {
         "headline-sm": ["Bebas Neue"],
         "body-sm": ["Montserrat"],
         "headline-lg-mobile": ["Bebas Neue"],
-        "body-md": ["Montserrat"]
+        "body-md": ["Montserrat"],
+        "brittany": ["'Brittany Signature'", "'Alex Brush'", "cursive"],
+        "signature": ["'Brittany Signature'", "'Alex Brush'", "cursive"]
       }
     }
   },

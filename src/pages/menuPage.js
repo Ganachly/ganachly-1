@@ -57,11 +57,15 @@ function renderProductGridItems(filtered) {
     `;
   }
 
+  const cart = store.getCart();
+
   return `
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5" id="productGrid">
       ${filtered.map(product => {
         const isSoldOut = product.stockStatus === 'sold_out';
         const isExclusive = product.stockStatus === 'nocturne_exclusive';
+        const cartItem = cart.find(c => c.productId === product.id);
+        const cartQty = cartItem ? cartItem.qty : 0;
 
         return `
           <article class="product-item flex flex-col justify-between rounded-2xl overflow-hidden bg-card-surface/70 border border-primary/15 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.5)] group">
@@ -85,6 +89,12 @@ function renderProductGridItems(filtered) {
                 </div>
               ` : ''}
 
+              ${cartQty > 0 ? `
+                <div class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-primary text-espresso-deep text-[10px] font-label-badge uppercase font-bold tracking-wider shadow-md">
+                  ${cartQty} in bag
+                </div>
+              ` : ''}
+
               ${isExclusive ? `
                 <span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-badge-exclusive/20 text-badge-exclusive text-[9px] font-label-badge uppercase tracking-wider backdrop-blur-md border border-badge-exclusive/20">
                   Nocturne Exclusive
@@ -103,12 +113,22 @@ function renderProductGridItems(filtered) {
                 </p>
               </div>
 
-              <!-- Price & Quick Add Button -->
+              <!-- Price & Quick Add / Qty Stepper -->
               <div class="pt-2 flex items-center justify-between border-t border-primary/10">
                 <span class="font-label-price text-sm text-gold-cream font-bold">₹${product.price}</span>
                 
                 ${isSoldOut ? `
                   <span class="text-[10px] text-on-surface-variant/50 uppercase tracking-wider font-semibold">Unavailable</span>
+                ` : cartQty > 0 ? `
+                  <div class="flex items-center rounded-lg bg-surface-container-high border border-primary/30 overflow-hidden shadow-sm">
+                    <button class="btn-card-qty-minus w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-bright transition-all font-bold text-base" data-id="${product.id}" title="Remove one">
+                      −
+                    </button>
+                    <span class="px-2.5 font-body-sm text-xs text-primary font-bold min-w-[1.5rem] text-center">${cartQty}</span>
+                    <button class="btn-card-qty-plus w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-bright transition-all font-bold text-base" data-id="${product.id}" title="Add one more">
+                      +
+                    </button>
+                  </div>
                 ` : `
                   <button class="btn-add-to-cart px-3 py-1.5 rounded-lg bg-primary hover:bg-gold-light text-espresso-deep font-label-action text-xs tracking-wider uppercase font-bold transition-all shadow-sm flex items-center gap-1 active:scale-95" data-id="${product.id}" title="Add to bag">
                     <span class="material-symbols-outlined text-[15px]">add</span>
@@ -196,16 +216,42 @@ export function renderMenuPage() {
 
 export function attachMenuPageEvents() {
   function attachProductEvents() {
-    // Add to cart buttons
+    // Add to cart buttons (shown when item not yet in cart)
     document.querySelectorAll('.btn-add-to-cart').forEach(btn => {
       btn.onclick = (e) => {
         e.stopPropagation();
         const id = btn.getAttribute('data-id');
         const product = store.getProductById(id);
-
         if (product) {
           store.addToCart(id, 1);
           showToast(`Added ${product.title} to bag (₹${product.price})`, 'shopping_bag');
+        }
+      };
+    });
+
+    // Qty minus buttons (shown when item already in cart)
+    document.querySelectorAll('.btn-card-qty-minus').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        const cart = store.getCart();
+        const item = cart.find(c => c.productId === id);
+        if (item) {
+          store.updateCartQty(id, item.qty - 1);
+          // updateMenuDisplay will be triggered by store subscriber
+        }
+      };
+    });
+
+    // Qty plus buttons (shown when item already in cart)
+    document.querySelectorAll('.btn-card-qty-plus').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        const cart = store.getCart();
+        const item = cart.find(c => c.productId === id);
+        if (item) {
+          store.updateCartQty(id, item.qty + 1);
         }
       };
     });

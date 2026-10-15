@@ -34,8 +34,8 @@ export const auth = {
     return null;
   },
 
-  loginCustom({ id, name, role = 'customer', avatar, phone, zone, address }) {
-    return store.loginWithCustomId({ id, name, role, avatar, phone, zone, address });
+  loginCustom({ id, code, name, role = 'customer', avatar, phone, zone, address }) {
+    return store.loginWithCustomId({ id, code, name, role, avatar, phone, zone, address });
   },
 
   /**
@@ -81,11 +81,11 @@ export const auth = {
             </span>
           </div>
 
-          <!-- Action: Sign in with Admin Credentials -->
+          <!-- Action: Sign in with Admin Credentials on /admin -->
           <div class="space-y-space-sm">
-            <a href="#/login" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-gold-hover to-primary-container text-espresso-deep font-label-action text-label-action uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 font-bold">
+            <a href="#/admin" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-gold-hover to-primary-container text-espresso-deep font-label-action text-label-action uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 font-bold">
               <span class="material-symbols-outlined text-[18px]">key</span>
-              <span>Sign In with Atelier Credentials</span>
+              <span>Sign In with Atelier Credentials (/admin)</span>
             </a>
 
             <a href="#/" class="inline-block pt-2 text-on-surface-variant hover:text-primary font-body-sm text-body-sm transition-colors">

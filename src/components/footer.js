@@ -6,10 +6,10 @@ export function renderStorefrontFooter() {
           
           <div class="space-y-space-md">
             <div class="flex items-center gap-space-sm">
-              <span class="font-headline-md text-headline-md tracking-wider text-primary">GANACHLY</span>
+              <span class="font-brittany text-3xl sm:text-4xl text-primary tracking-normal leading-tight select-none">Ganachly</span>
             </div>
             <p class="font-editorial-quote text-[16px] leading-relaxed text-on-surface-variant italic">
-              Faridabad's luxury nocturnal patisserie. Freshly crafted after 6:30 PM with pure 70% dark Belgian couverture. 100% eggless, zero preservatives.
+              Faridabad's luxury patisserie. Things baked with love with pure 70% dark Belgian couverture. 100% eggless, zero preservatives.
             </p>
             <div class="flex items-center gap-space-xs text-gold-cream">
               <span class="material-symbols-outlined text-[16px] text-primary">verified</span>
@@ -60,7 +60,7 @@ export function renderStorefrontFooter() {
         <div class="mt-space-2xl pt-space-md border-t border-primary/10 flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
           <p>© 2025 Ganachly Luxury Patisserie. All rights reserved. Handcrafted nocturnal confectionery.</p>
           <p class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream">
-            BAKED AFTER 6:30 PM • 100% EGGLESS • PURE COUVERTURE
+            THINGS BAKED WITH LOVE • 100% EGGLESS • PURE COUVERTURE
           </p>
         </div>
       </div>

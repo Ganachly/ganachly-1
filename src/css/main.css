@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Brittany Signature Web Font */
+@font-face {
+  font-family: 'Brittany Signature';
+  src: url('https://db.onlinewebfonts.com/t/b4d584ed0e53ba94a815f817690faab2.woff2') format('woff2'),
+       url('https://db.onlinewebfonts.com/t/b4d584ed0e53ba94a815f817690faab2.woff') format('woff'),
+       url('https://db.onlinewebfonts.com/t/b4d584ed0e53ba94a815f817690faab2.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-brittany, .font-signature, .brand-signature {
+  font-family: 'Brittany Signature', 'Alex Brush', cursive !important;
+  font-weight: normal;
+  text-transform: none !important;
+  letter-spacing: 0.02em;
+}
+
 @layer base {
   html, body {
     margin: 0;

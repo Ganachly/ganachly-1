@@ -12,11 +12,7 @@ export function renderCartDrawer() {
   const patronName = isGuest ? '' : (user.name || '');
   const patronPhone = isGuest ? '' : (user.phone || '');
   const patronAddress = isGuest ? '' : (user.address || '');
-  const zones = store.state.deliveryZones;
-  const selectedZoneId = container.dataset.selectedZone || 'fbd';
-  const selectedZone = zones.find(z => z.id === selectedZoneId) || zones[0];
-  const deliveryFee = selectedZone.fee;
-  const total = subtotal + deliveryFee;
+  const total = subtotal;
 
   container.innerHTML = `
     <div id="cartDrawerBackdrop" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex justify-end">
@@ -75,26 +71,15 @@ export function renderCartDrawer() {
               `).join('')}
             </div>
 
-            <!-- Order Configuration Form -->
+            <!-- Order Details Form -->
             <div class="mt-6 p-4 rounded-xl bg-surface-container-low border border-primary/15 space-y-3">
               <span class="font-label-badge text-label-badge uppercase tracking-widest text-primary block">
-                NCR Evening Courier Details
+                Order Details
               </span>
 
               <div>
-                <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Delivery Destination</label>
-                <select id="checkoutZoneSelect" class="w-full px-3 py-2 rounded-lg bg-espresso-panel border border-outline-variant/40 text-gold-cream font-body-sm text-body-sm focus:outline-none focus:border-primary cursor-pointer">
-                  ${zones.map(z => `
-                    <option value="${z.id}" ${z.id === selectedZone.id ? 'selected' : ''}>
-                      ${z.name} ${z.fee === 0 ? '(Free)' : `(+₹${z.fee})`} • ${z.time}
-                    </option>
-                  `).join('')}
-                </select>
-              </div>
-
-              <div>
-                <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Delivery Address</label>
-                <textarea id="checkoutAddressInput" rows="2" placeholder="House/Flat No., Tower, Street, Landmark, Pincode"
+                <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Pickup / Contact Address</label>
+                <textarea id="checkoutAddressInput" rows="2" placeholder="Your address or pickup instructions"
                   class="w-full px-3 py-2 rounded-lg bg-espresso-panel border border-outline-variant/40 text-on-surface font-body-sm text-body-sm focus:outline-none focus:border-primary resize-none">${patronAddress}</textarea>
               </div>
 
@@ -132,7 +117,7 @@ export function renderCartDrawer() {
                   </label>
                   <label class="flex items-center gap-2 p-2 rounded-lg bg-espresso-panel border border-outline-variant/30 cursor-pointer">
                     <input type="radio" name="paymentMethod" value="cod" class="accent-primary">
-                    <span class="font-body-sm text-xs text-on-surface">Cash on Evening Run</span>
+                    <span class="font-body-sm text-xs text-on-surface">Cash on Pickup</span>
                   </label>
                 </div>
               </div>
@@ -148,12 +133,8 @@ export function renderCartDrawer() {
                 <span>Confections Subtotal</span>
                 <span class="text-on-surface font-semibold">₹${subtotal}</span>
               </div>
-              <div class="flex justify-between">
-                <span>Courier SLA (${selectedZone.name})</span>
-                <span class="text-gold-light">${deliveryFee === 0 ? 'Free Atelier Courier' : `₹${deliveryFee}`}</span>
-              </div>
               <div class="flex justify-between pt-1 border-t border-primary/10 text-base font-bold text-gold-cream">
-                <span>Grand Total</span>
+                <span>Total</span>
                 <span class="font-label-price text-lg text-primary">₹${total}</span>
               </div>
             </div>
@@ -191,15 +172,6 @@ export function renderCartDrawer() {
     exploreBtn.onclick = () => {
       close();
       window.location.hash = '#/menu';
-    };
-  }
-
-  // Zone select
-  const zoneSelect = document.getElementById('checkoutZoneSelect');
-  if (zoneSelect) {
-    zoneSelect.onchange = (e) => {
-      container.dataset.selectedZone = e.target.value;
-      renderCartDrawer();
     };
   }
 
@@ -248,7 +220,7 @@ export function renderCartDrawer() {
       const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'upi';
 
       if (!address) {
-        showToast('Please enter your delivery address', 'error', 'NCR Courier Address Required');
+        showToast('Please enter your address or pickup details', 'error', 'Address Required');
         const addrEl = document.getElementById('checkoutAddressInput');
         if (addrEl) {
           addrEl.focus();
@@ -267,7 +239,7 @@ export function renderCartDrawer() {
           customerEmail,
           customerPhone,
           address,
-          zone,
+          zone: 'Self / WhatsApp',
           specialNote,
           paymentMethod
         });

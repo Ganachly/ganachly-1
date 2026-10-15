@@ -287,7 +287,7 @@ export async function getUsersFromFirestore() {
 /**
  * Helper to register or sign in a user with Firebase Auth and sync their profile
  */
-export async function firebaseRegisterOrLogin({ email, password, name, phone, zone, role = 'customer' }) {
+export async function firebaseRegisterOrLogin({ email, password, name, phone, zone, role = 'customer', code }) {
   const normalizedEmail = (email || '').toLowerCase().trim();
   const isHardik = normalizedEmail === 'hardikkush987@gmail.com' || normalizedEmail === 'admin@ganachly.com' || role === 'admin';
   const effectiveRole = isHardik ? 'admin' : 'customer';
@@ -315,6 +315,7 @@ export async function firebaseRegisterOrLogin({ email, password, name, phone, zo
   const userProfile = {
     id: normalizedEmail,
     uid: firebaseUser ? firebaseUser.uid : `usr-${Date.now()}`,
+    code: code || (isHardik ? 'ADMIN-ATELIER-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`),
     email: normalizedEmail,
     name: name || (isHardik ? 'Hardik' : normalizedEmail.split('@')[0]),
     role: effectiveRole,
@@ -440,6 +441,27 @@ export async function clearUserCartInFirestore(userId) {
     console.info(`[Firebase] Cloud cart cache cleared for ${userId} following order placement.`);
   } catch (err) {
     console.debug('[Firebase] Cart cloud clear notice:', err.message);
+  }
+}
+
+/**
+ * Upload a product image File to Firebase Storage and return the public download URL.
+ * Path: product-images/{timestamp}-{filename}
+ */
+export async function uploadProductImageToStorage(file) {
+  try {
+    const { getStorage, ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+    const storage = getStorage(app);
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `product-images/${Date.now()}-${safeName}`;
+    const storageRef = ref(storage, path);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadUrl = await getDownloadURL(snapshot.ref);
+    console.info(`[Firebase Storage] Image uploaded: ${downloadUrl}`);
+    return downloadUrl;
+  } catch (err) {
+    console.error('[Firebase Storage] Upload failed:', err);
+    throw err;
   }
 }
 

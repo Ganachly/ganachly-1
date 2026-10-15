@@ -21,13 +21,11 @@ The platform provides a dual-facing architecture: a **luxury customer storefront
 - **Delhi NCR Delivery Zones:** Intelligent SLAs covering Faridabad, Gurugram, South/Central Delhi, Noida, West Delhi, and Ghaziabad.
 - **WhatsApp Concierge & Bulk Gifting:** Direct prefilled WhatsApp inquiry generator for corporate gifting and custom event hampers.
 
-### 🔐 2. Smart Authentication & Cache Memory
-- **No Repeated Logins:** Firebase Auth configured with `browserLocalPersistence` plus local session cache (`ganachly_cached_user`).
-- **Unified Sign-In Interface:** Single streamlined authentication screen without separate staff/customer toggle tabs.
-- **Smart Credential Redirection:**
-  - **Atelier Admin:** Logging in with `hardikkush987@gmail.com` and password `anoopritu` automatically redirects to the **Atelier Operations Console** (`#/admin/batches`).
-  - **Patron Storefront:** All other credentials authenticate as patrons and redirect directly to the **Menu Storefront** (`#/menu`) to place orders.
-- **Google Identity Services:** Integrated Google OAuth and One Tap sign-in.
+### 🔐 2. Dedicated Portals & Smart Authentication
+- **Dedicated Atelier Admin Portal (`#/admin`):** Master Patissier Admin logs in directly via the `/admin` portal using credentials (`hardikkush987@gmail.com` / `anoopritu`) to access live kitchen hearth operations.
+- **Dedicated Patron Storefront Portal (`#/login`):** Customers and connoisseurs log in or register via `#/login` to order confections, manage delivery addresses, and track active evening bakes. Admin login attempts on `#/login` are safely routed to `#/admin`.
+- **Persistent Cache Memory:** Firebase Auth configured with `browserLocalPersistence` plus local session cache (`ganachly_cached_user`).
+- **Google Identity Services:** Integrated Google OAuth and One Tap sign-in for storefront patrons.
 
 ### 👨‍🍳 3. Atelier Operations Console (`#/admin`)
 - **Live Batches & Oven Decks:** Real-time deck telemetry (Decks A, B, C) with stage progression controls (`Prep` ➔ `Baking` ➔ `Cooling` ➔ `Glazed`).
@@ -128,10 +126,10 @@ Ganachly/
 
 ## 🔑 Operational Credentials
 
-| Portal | Email / ID | Password | Destination |
-|---|---|---|---|
-| **Master Patissier Admin** | `hardikkush987@gmail.com` | `anoopritu` | `#/admin/batches` (Atelier Console) |
-| **Customer Storefront** | Any email | Any password | `#/menu` (Storefront Formulary) |
+| Portal | Login URL | Email / ID | Password | Destination |
+|---|---|---|---|---|
+| **Master Patissier Admin** | `#/admin` | `hardikkush987@gmail.com` | `anoopritu` | `#/admin/batches` (Atelier Console) |
+| **Customer Storefront** | `#/login` | Any email | Any password | `#/menu` (Storefront Formulary) |
 
 ---
 

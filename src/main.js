@@ -22,6 +22,7 @@ import { renderAdminOrdersPage, attachAdminOrdersPageEvents } from './pages/admi
 import { renderAdminInventoryPage, attachAdminInventoryPageEvents } from './pages/adminInventoryPage.js';
 import { renderAdminCatalogPage, attachAdminCatalogPageEvents } from './pages/adminCatalogPage.js';
 import { renderAdminPatronsPage, attachAdminPatronsPageEvents } from './pages/adminPatronsPage.js';
+import { renderAdminLoginPage, attachAdminLoginPageEvents } from './pages/adminLoginPage.js';
 import { renderLoginPage, attachLoginPageEvents } from './pages/loginPage.js';
 
 // Expose global drawer & modal helpers
@@ -43,21 +44,21 @@ function renderRoute() {
   // Scroll to top on page navigation
   window.scrollTo({ top: 0, behavior: 'instant' });
 
-  // Direct alias for admin login
-  if (cleanHash === '#/admin/login') {
-    dismissGoogleOneTap();
-    window.location.hash = '#/login';
-    return;
-  }
-
   // 1. ADMIN ROUTES
   if (cleanHash.startsWith('#/admin')) {
     dismissGoogleOneTap();
-    // Permission check (Admin only)
+
+    // If unauthenticated / not admin, render dedicated Atelier Admin Login directly on /admin
     if (!auth.isAdmin()) {
-      document.title = 'Atelier Gate | Ganachly Operations';
-      app.innerHTML = auth.renderRestrictedGate(cleanHash);
-      auth.setupRestrictedGateEvents();
+      document.title = 'Atelier Admin Login • Ganachly Operations';
+      app.innerHTML = renderAdminLoginPage(cleanHash);
+      attachAdminLoginPageEvents(cleanHash);
+      return;
+    }
+
+    // If authenticated as admin and visiting #/admin, #/admin/, or #/admin/login, redirect to batches
+    if (cleanHash === '#/admin' || cleanHash === '#/admin/' || cleanHash === '#/admin/login') {
+      window.location.hash = '#/admin/batches';
       return;
     }
 

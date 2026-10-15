@@ -1,6 +1,7 @@
-import { store } from '../state/store.js';
+﻿import { store } from '../state/store.js';
 import { showToast } from '../components/toast.js';
-import { normalizeImageUrl, isGoogleDriveUrl } from '../utils/imageUtils.js';
+import { normalizeImageUrl, isGoogleDriveUrl, readFileAsDataUrl } from '../utils/imageUtils.js';
+import { uploadProductImageToStorage } from '../services/firebase.js';
 
 export function renderAdminCatalogPage() {
   const products = store.getProducts();
@@ -150,27 +151,60 @@ export function renderAdminCatalogPage() {
             </div>
           </div>
           <div>
-            <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center justify-between mb-1.5">
               <label class="text-xs font-label-badge uppercase tracking-wider text-gold-cream block">
-                Product Image (Direct URL or Google Drive Link)
+                Product Image
               </label>
               <span id="drive-badge-indicator" class="hidden text-[10px] text-whatsapp-green font-bold uppercase tracking-wider items-center gap-1">
                 <span class="material-symbols-outlined text-[13px]">check_circle</span>
-                Google Drive Link Auto-Converted
+                Drive Link Converted
               </span>
             </div>
-            <input id="form-product-image" type="text" placeholder="Paste image link or Google Drive sharing URL..." class="w-full px-4 py-2.5 rounded-lg bg-surface-container text-on-surface text-sm focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/20 font-mono text-xs">
-            <p class="text-[11px] text-on-surface-variant/75 mt-1 leading-relaxed">
-              Accepts web images & Google Drive sharing links (e.g. <span class="font-mono text-[10px] text-primary/80">drive.google.com/file/d/.../view?usp=sharing</span>). Ensure file permission is <b>"Anyone with the link can view"</b>.
-            </p>
 
-            <!-- Real-time Image Preview -->
+            <!-- Tab switcher: Upload vs URL -->
+            <div class="flex rounded-lg overflow-hidden border border-outline-variant/25 mb-2.5">
+              <button type="button" id="img-tab-upload" class="flex-1 py-1.5 text-[11px] font-label-badge uppercase tracking-wider bg-primary text-espresso-deep font-bold transition-all">
+                <span class="material-symbols-outlined text-[13px] align-middle">upload</span> Upload File
+              </button>
+              <button type="button" id="img-tab-url" class="flex-1 py-1.5 text-[11px] font-label-badge uppercase tracking-wider bg-surface-container text-on-surface-variant hover:text-gold-cream transition-all">
+                <span class="material-symbols-outlined text-[13px] align-middle">link</span> Paste URL
+              </button>
+            </div>
+
+            <!-- Upload Panel (default visible) -->
+            <div id="img-panel-upload">
+              <label for="form-product-image-file" class="flex flex-col items-center justify-center w-full h-24 rounded-xl border-2 border-dashed border-primary/30 bg-surface-container-low hover:border-primary/60 hover:bg-surface-container cursor-pointer transition-all group">
+                <span class="material-symbols-outlined text-3xl text-primary/50 group-hover:text-primary transition-colors">add_photo_alternate</span>
+                <span class="text-[11px] text-on-surface-variant mt-1">Click to choose an image from your device</span>
+                <span class="text-[10px] text-on-surface-variant/60">JPG, PNG, WEBP &middot; Max 5 MB</span>
+              </label>
+              <input id="form-product-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden">
+              <div id="upload-progress" class="hidden mt-2 flex items-center gap-2 text-xs text-gold-cream">
+                <span class="material-symbols-outlined text-[16px] animate-spin">sync</span>
+                <span>Uploading to cloud storage&hellip;</span>
+              </div>
+            </div>
+
+            <!-- URL Panel (hidden by default) -->
+            <div id="img-panel-url" class="hidden">
+              <input id="form-product-image" type="text" placeholder="Paste image URL or Google Drive sharing link&hellip;"
+                class="w-full px-4 py-2.5 rounded-lg bg-surface-container text-on-surface text-sm focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/20 font-mono text-xs">
+              <p class="text-[11px] text-on-surface-variant/75 mt-1 leading-relaxed">
+                Direct image URLs or Google Drive sharing links. Set Drive permission to <b>&ldquo;Anyone with the link can view&rdquo;</b>.
+              </p>
+            </div>
+
+            <!-- Hidden field: always holds the final resolved image URL -->
+            <input type="hidden" id="form-product-image-final">
+
+            <!-- Live Preview -->
             <div id="image-preview-container" class="mt-2.5 hidden p-2.5 rounded-xl bg-surface-container-low border border-primary/20 items-center gap-3">
-              <div class="w-14 h-14 rounded-lg bg-surface-container overflow-hidden flex-shrink-0 border border-outline-variant/30 flex items-center justify-center">
-                <img id="image-preview-thumb" src="" alt="Preview" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';">
+              <div class="w-16 h-16 rounded-lg bg-surface-container overflow-hidden flex-shrink-0 border border-outline-variant/30 flex items-center justify-center">
+                <img id="image-preview-thumb" src="" alt="Preview" class="w-full h-full object-cover"
+                  onerror="this.onerror=null; var s=document.getElementById('image-preview-status'); if(s){s.textContent='Image failed to load'; s.style.color='#f87171';}">
               </div>
               <div class="min-w-0 flex-1">
-                <span class="text-[11px] font-bold text-gold-cream block truncate" id="image-preview-status">Live Image Preview</span>
+                <span class="text-[11px] font-bold text-gold-cream block truncate" id="image-preview-status">Image Preview</span>
                 <span class="text-[10px] text-on-surface-variant truncate block font-mono" id="image-preview-url"></span>
               </div>
             </div>
@@ -233,48 +267,103 @@ export function attachAdminCatalogPageEvents() {
     };
   });
 
-  const imageInput = document.getElementById('form-product-image');
+  const imageFileInput = document.getElementById('form-product-image-file');
+  const imageUrlInput = document.getElementById('form-product-image');
+  const imageFinalInput = document.getElementById('form-product-image-final');
   const previewContainer = document.getElementById('image-preview-container');
   const previewThumb = document.getElementById('image-preview-thumb');
   const previewUrl = document.getElementById('image-preview-url');
+  const previewStatus = document.getElementById('image-preview-status');
   const driveBadge = document.getElementById('drive-badge-indicator');
+  const uploadProgress = document.getElementById('upload-progress');
+  const tabUpload = document.getElementById('img-tab-upload');
+  const tabUrl = document.getElementById('img-tab-url');
+  const panelUpload = document.getElementById('img-panel-upload');
+  const panelUrl = document.getElementById('img-panel-url');
+
+  // Tab switcher
+  function setTab(tab) {
+    if (tab === 'upload') {
+      tabUpload.className = 'flex-1 py-1.5 text-[11px] font-label-badge uppercase tracking-wider bg-primary text-espresso-deep font-bold transition-all';
+      tabUrl.className = 'flex-1 py-1.5 text-[11px] font-label-badge uppercase tracking-wider bg-surface-container text-on-surface-variant hover:text-gold-cream transition-all';
+      panelUpload.classList.remove('hidden');
+      panelUrl.classList.add('hidden');
+    } else {
+      tabUrl.className = 'flex-1 py-1.5 text-[11px] font-label-badge uppercase tracking-wider bg-primary text-espresso-deep font-bold transition-all';
+      tabUpload.className = 'flex-1 py-1.5 text-[11px] font-label-badge uppercase tracking-wider bg-surface-container text-on-surface-variant hover:text-gold-cream transition-all';
+      panelUrl.classList.remove('hidden');
+      panelUpload.classList.add('hidden');
+    }
+  }
+  if (tabUpload) tabUpload.onclick = () => setTab('upload');
+  if (tabUrl) tabUrl.onclick = () => setTab('url');
+
+  // Show preview from a final resolved URL
+  const showPreview = (url, label = 'Image Preview') => {
+    if (!url) {
+      previewContainer?.classList.add('hidden');
+      previewContainer?.classList.remove('flex');
+      return;
+    }
+    if (previewThumb) previewThumb.src = url;
+    if (previewUrl) previewUrl.textContent = url.length > 60 ? url.slice(0, 57) + '…' : url;
+    if (previewStatus) { previewStatus.textContent = label; previewStatus.style.color = ''; }
+    previewContainer?.classList.remove('hidden');
+    previewContainer?.classList.add('flex');
+  };
 
   const updateImagePreview = (rawUrl) => {
     if (!rawUrl || !rawUrl.trim()) {
-      if (previewContainer) {
-        previewContainer.classList.remove('flex');
-        previewContainer.classList.add('hidden');
-      }
-      if (driveBadge) {
-        driveBadge.classList.remove('flex');
-        driveBadge.classList.add('hidden');
-      }
+      previewContainer?.classList.add('hidden');
+      previewContainer?.classList.remove('flex');
+      driveBadge?.classList.add('hidden');
+      driveBadge?.classList.remove('flex');
+      if (imageFinalInput) imageFinalInput.value = '';
       return;
     }
     const normalized = normalizeImageUrl(rawUrl);
     const isDrive = isGoogleDriveUrl(rawUrl);
-
     if (driveBadge) {
-      if (isDrive) {
-        driveBadge.classList.remove('hidden');
-        driveBadge.classList.add('flex');
-      } else {
-        driveBadge.classList.remove('flex');
-        driveBadge.classList.add('hidden');
-      }
+      if (isDrive) { driveBadge.classList.remove('hidden'); driveBadge.classList.add('flex'); }
+      else { driveBadge.classList.remove('flex'); driveBadge.classList.add('hidden'); }
     }
-
-    if (previewContainer && previewThumb) {
-      previewThumb.src = normalized;
-      if (previewUrl) previewUrl.textContent = normalized;
-      previewContainer.classList.remove('hidden');
-      previewContainer.classList.add('flex');
-    }
+    if (imageFinalInput) imageFinalInput.value = normalized;
+    showPreview(normalized, isDrive ? 'Google Drive Image' : 'Image Preview');
   };
 
-  if (imageInput) {
-    imageInput.addEventListener('input', (e) => updateImagePreview(e.target.value));
-    imageInput.addEventListener('change', (e) => updateImagePreview(e.target.value));
+  if (imageUrlInput) {
+    imageUrlInput.addEventListener('input', (e) => updateImagePreview(e.target.value));
+    imageUrlInput.addEventListener('change', (e) => updateImagePreview(e.target.value));
+  }
+
+  // File upload handler
+  if (imageFileInput) {
+    imageFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Image must be under 5 MB', 'error');
+        return;
+      }
+      // Show local preview immediately while uploading
+      const dataUrl = await readFileAsDataUrl(file);
+      if (imageFinalInput) imageFinalInput.value = dataUrl; // temp
+      showPreview(dataUrl, 'Uploading…');
+      if (uploadProgress) uploadProgress.classList.remove('hidden');
+
+      try {
+        const downloadUrl = await uploadProductImageToStorage(file);
+        if (imageFinalInput) imageFinalInput.value = downloadUrl;
+        showPreview(downloadUrl, '✓ Uploaded to cloud storage');
+        showToast('Image uploaded successfully!', 'check_circle');
+      } catch (err) {
+        // Keep the local data URL as fallback
+        showToast('Cloud upload failed — using local preview only', 'warning');
+        if (previewStatus) previewStatus.textContent = '⚠ Using local preview (not saved to cloud)';
+      } finally {
+        if (uploadProgress) uploadProgress.classList.add('hidden');
+      }
+    });
   }
 
   // Add Product button
@@ -284,6 +373,8 @@ export function attachAdminCatalogPageEvents() {
     document.getElementById('product-modal-title').innerText = 'Add New Formulation';
     document.getElementById('form-product-id').value = '';
     form.reset();
+    if (imageFinalInput) imageFinalInput.value = '';
+    setTab('upload');
     updateImagePreview('');
     modal.classList.replace('hidden', 'flex');
   };
@@ -308,8 +399,12 @@ export function attachAdminCatalogPageEvents() {
       document.getElementById('form-product-desc').value = p.desc || p.description || '';
       document.getElementById('form-product-weight').value = p.weight || '';
       document.getElementById('form-product-tag').value = p.badge || p.tag || '';
-      document.getElementById('form-product-image').value = p.image || '';
-      updateImagePreview(p.image || '');
+      // Pre-fill both the URL field and the final hidden field
+      const existingImg = p.image || '';
+      if (imageUrlInput) imageUrlInput.value = existingImg;
+      if (imageFinalInput) imageFinalInput.value = existingImg;
+      setTab('url');
+      updateImagePreview(existingImg);
       modal.classList.replace('hidden', 'flex');
     };
   });
@@ -319,8 +414,10 @@ export function attachAdminCatalogPageEvents() {
     form.onsubmit = (e) => {
       e.preventDefault();
       const id = document.getElementById('form-product-id').value;
-      const rawImage = document.getElementById('form-product-image').value.trim();
-      const finalImage = normalizeImageUrl(rawImage) || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';
+      // Use the hidden final field (set by both upload and URL paths)
+      const rawImage = (imageFinalInput?.value || imageUrlInput?.value || '').trim();
+      const finalImage = rawImage.startsWith('data:') ? rawImage
+        : (normalizeImageUrl(rawImage) || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80');
 
       const data = {
         title: document.getElementById('form-product-title').value.trim(),

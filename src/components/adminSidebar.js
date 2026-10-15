@@ -21,7 +21,7 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
         <!-- Brand Header -->
         <div class="h-16 px-space-lg flex items-center justify-between bg-surface-container-lowest/60 border-b border-primary/10">
           <div class="flex flex-col">
-            <span class="font-headline-sm text-headline-sm tracking-widest text-primary uppercase">GANACHLY</span>
+            <span class="font-brittany text-2xl sm:text-3xl tracking-normal text-primary leading-tight select-none">Ganachly</span>
             <span class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream tracking-widest uppercase text-[10px]">Atelier Operations</span>
           </div>
           <div class="flex items-center gap-2">
