@@ -24,6 +24,7 @@ import {
   onSnapshot,
   getDocs
 } from '../services/firebase.js';
+import { normalizeImageUrl } from '../utils/imageUtils.js';
 
 export const STORAGE_KEY = 'ganachly_master_state_v8';
 export const USER_CACHE_KEY = 'ganachly_cached_user';
@@ -77,6 +78,11 @@ class GanachlyStore {
       if (cachedUserStr) {
         const parsedU = JSON.parse(cachedUserStr);
         if (parsedU && parsedU.id && !parsedU.id.includes('guest') && parsedU.id !== 'guest@ganachly.com') {
+          if (parsedU.id?.toLowerCase() === 'hardikkush987@gmail.com' || parsedU.email?.toLowerCase() === 'hardikkush987@gmail.com') {
+            parsedU.role = 'admin';
+            parsedU.avatar = '👨‍🍳';
+            parsedU.title = 'Master Patissier & Founder';
+          }
           cachedUser = parsedU;
         }
       }
@@ -114,7 +120,10 @@ class GanachlyStore {
 
         return {
           currentUser: cachedUser || ((parsed.currentUser && !isLegacyDummyCustomer) ? parsed.currentUser : defaultGuestUser),
-          products: (parsed.products || []).filter(p => !legacyMockProductIds.has(p.id)),
+          products: (parsed.products || []).filter(p => !legacyMockProductIds.has(p.id)).map(p => {
+            if (p.image) p.image = normalizeImageUrl(p.image);
+            return p;
+          }),
           orders: (parsed.orders || []).filter(o => !legacyMockIds.has(o.id)),
           cart: finalCart,
           inventory: (parsed.inventory || []).filter(i => !['inv-1', 'inv-2', 'inv-3', 'inv-4', 'inv-5', 'inv-6'].includes(i.id)),
@@ -222,6 +231,13 @@ class GanachlyStore {
   }
 
   setCurrentUser(user) {
+    if (user && (user.id?.toLowerCase() === 'hardikkush987@gmail.com' || user.email?.toLowerCase() === 'hardikkush987@gmail.com')) {
+      user.role = 'admin';
+      user.avatar = '👨‍🍳';
+      user.title = 'Master Patissier & Founder';
+      user.badgeClass = 'bg-primary text-espresso-deep';
+      user.zone = 'Faridabad Atelier Central';
+    }
     this.state.currentUser = user;
     
     // Save to persistent cache memory so user does not need to login again and again
@@ -266,19 +282,20 @@ class GanachlyStore {
   }
 
   loginWithCustomId({ id, name, role, avatar, phone, zone, address }) {
-    const isStaffOrAdmin = role === 'admin' || role === 'staff';
+    const isHardik = (id || '').toLowerCase() === 'hardikkush987@gmail.com' || (id || '').toLowerCase() === 'admin@ganachly.com';
+    const effectiveRole = isHardik ? 'admin' : (role || 'customer');
     const newUser = {
-      id: id || (isStaffOrAdmin ? 'staff@ganachly.com' : 'patron@ganachly.com'),
-      code: isStaffOrAdmin ? `ATELIER-${Math.floor(100 + Math.random() * 900)}` : `CUST-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: name || (isStaffOrAdmin ? 'Atelier Member' : 'Valued Patron'),
-      title: isStaffOrAdmin ? 'Kitchen Team' : 'Delhi NCR Connoisseur',
-      role: role || 'customer',
-      avatar: avatar || (isStaffOrAdmin ? '👨‍🍳' : '🍫'),
-      badgeClass: isStaffOrAdmin ? 'bg-primary text-espresso-deep' : 'bg-secondary text-espresso-deep',
-      phone: phone || '+91 98110 00000',
-      zone: zone || 'Delhi NCR',
+      id: id || (isHardik ? 'hardikkush987@gmail.com' : 'patron@ganachly.com'),
+      code: isHardik ? 'ADMIN-ATELIER-01' : `CUST-${Math.floor(1000 + Math.random() * 9000)}`,
+      name: name || (isHardik ? 'Hardik' : 'Valued Patron'),
+      title: isHardik ? 'Master Patissier & Founder' : 'Delhi NCR Connoisseur',
+      role: effectiveRole,
+      avatar: avatar || (isHardik ? '👨‍🍳' : '🍫'),
+      badgeClass: isHardik ? 'bg-primary text-espresso-deep' : 'bg-secondary text-espresso-deep',
+      phone: phone || (isHardik ? '+91 98110 00192' : '+91 98110 00000'),
+      zone: zone || (isHardik ? 'Faridabad Atelier Central' : 'Delhi NCR'),
       address: address || 'Faridabad, Delhi NCR',
-      description: isStaffOrAdmin ? 'Atelier Operations Member' : 'Custom Registered Connoisseur'
+      description: isHardik ? 'Full master access: Live Batches, Dispatch Console, Catalog Manager & Stocks.' : 'Custom Registered Connoisseur'
     };
     this.setCurrentUser(newUser);
     return newUser;
@@ -314,6 +331,9 @@ class GanachlyStore {
   patchProduct(productId, updates) {
     const product = this.getProductById(productId);
     if (product) {
+      if (updates.image) {
+        updates.image = normalizeImageUrl(updates.image);
+      }
       Object.assign(product, updates);
       this.saveState();
       saveProductToFirestore(product);
@@ -328,12 +348,13 @@ class GanachlyStore {
 
   addProduct(newProd) {
     const id = newProd.id || ('prod-' + Date.now().toString(36) + '-' + Math.floor(100 + Math.random() * 900));
+    const normalizedImg = normalizeImageUrl(newProd.image) || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';
     const item = {
       id,
       title: newProd.title || 'Seasonal Couverture Specialty',
       price: parseInt(newProd.price, 10) || 220,
       category: newProd.category || 'brownie',
-      image: newProd.image || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80',
+      image: normalizedImg,
       desc: newProd.desc || newProd.description || 'Micro-batch seasonal confection made with 70.5% Belgian dark couverture.',
       badge: newProd.badge || newProd.tag || '',
       tags: newProd.tags || ['100% Eggless', '70% Couverture'],

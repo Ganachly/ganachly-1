@@ -11,46 +11,18 @@ import { renderIdentityModal } from './components/identityModal.js';
 import { openProductDetailModal } from './components/productDetailModal.js';
 import { showToast } from './components/toast.js';
 
-// Dynamic route loaders for lightning-fast initial page load & code splitting
-const pageLoaders = {
-  home: () => import('./pages/homePage.js'),
-  menu: () => import('./pages/menuPage.js'),
-  story: () => import('./pages/storyPage.js'),
-  gifting: () => import('./pages/giftingPage.js'),
-  login: () => import('./pages/loginPage.js'),
-  myOrders: () => import('./pages/myOrdersPage.js'),
-  adminOrders: () => import('./pages/adminOrdersPage.js'),
-  adminPatrons: () => import('./pages/adminPatronsPage.js'),
-  adminInventory: () => import('./pages/adminInventoryPage.js'),
-  adminCatalog: () => import('./pages/adminCatalogPage.js'),
-  adminBatches: () => import('./pages/adminBatchesPage.js')
-};
-
-const moduleCache = new Map();
-
-async function getPageModule(key) {
-  if (moduleCache.has(key)) {
-    return moduleCache.get(key);
-  }
-  const loader = pageLoaders[key];
-  if (!loader) return null;
-  const mod = await loader();
-  moduleCache.set(key, mod);
-  return mod;
-}
-
-// Idle route prefetcher for instant 0ms subsequent navigations
-function prefetchCommonRoutes() {
-  const common = ['menu', 'home', 'story', 'gifting'];
-  const idleFn = window.requestIdleCallback || ((cb) => setTimeout(cb, 400));
-  idleFn(() => {
-    common.forEach((key) => {
-      if (!moduleCache.has(key) && pageLoaders[key]) {
-        pageLoaders[key]().then((mod) => moduleCache.set(key, mod)).catch(() => {});
-      }
-    });
-  });
-}
+// Direct page modules for 100% synchronous, bulletproof rendering
+import { renderHomePage, attachHomePageEvents } from './pages/homePage.js';
+import { renderMenuPage, attachMenuPageEvents } from './pages/menuPage.js';
+import { renderStoryPage, attachStoryPageEvents } from './pages/storyPage.js';
+import { renderGiftingPage, attachGiftingPageEvents } from './pages/giftingPage.js';
+import { renderMyOrdersPage, attachMyOrdersPageEvents } from './pages/myOrdersPage.js';
+import { renderAdminBatchesPage, attachAdminBatchesPageEvents } from './pages/adminBatchesPage.js';
+import { renderAdminOrdersPage, attachAdminOrdersPageEvents } from './pages/adminOrdersPage.js';
+import { renderAdminInventoryPage, attachAdminInventoryPageEvents } from './pages/adminInventoryPage.js';
+import { renderAdminCatalogPage, attachAdminCatalogPageEvents } from './pages/adminCatalogPage.js';
+import { renderAdminPatronsPage, attachAdminPatronsPageEvents } from './pages/adminPatronsPage.js';
+import { renderLoginPage, attachLoginPageEvents } from './pages/loginPage.js';
 
 // Expose global drawer & modal helpers
 window.openCartDrawer = renderCartDrawer;
@@ -59,15 +31,12 @@ window.openProductDetailModal = openProductDetailModal;
 window.showToast = showToast;
 
 /**
- * Main Router & Renderer (Code Split & Instant Cached Transitions)
+ * Main Router & Synchronous Renderer (Guaranteed Instant Rendering)
  */
-let currentRenderToken = 0;
-
-async function renderRoute() {
+function renderRoute() {
   const app = document.getElementById('app');
   if (!app) return;
 
-  const renderId = ++currentRenderToken;
   const rawHash = window.location.hash || '#/';
   const cleanHash = rawHash.split('?')[0].toLowerCase();
 
@@ -77,7 +46,7 @@ async function renderRoute() {
   // Direct alias for admin login
   if (cleanHash === '#/admin/login') {
     dismissGoogleOneTap();
-    window.location.hash = '#/login?tab=admin';
+    window.location.hash = '#/login';
     return;
   }
 
@@ -92,70 +61,56 @@ async function renderRoute() {
       return;
     }
 
-    let pageKey = 'adminBatches';
+    let adminPageContent = '';
+    let attachEventsFn = null;
     let pageTitle = 'Atelier Dashboard';
 
     if (cleanHash === '#/admin/orders') {
       pageTitle = 'Orders & Concierge';
-      pageKey = 'adminOrders';
+      adminPageContent = renderAdminOrdersPage();
+      attachEventsFn = attachAdminOrdersPageEvents;
     } else if (cleanHash === '#/admin/patrons' || cleanHash === '#/admin/users') {
       pageTitle = 'Patrons & Accounts Directory';
-      pageKey = 'adminPatrons';
+      adminPageContent = renderAdminPatronsPage();
+      attachEventsFn = attachAdminPatronsPageEvents;
     } else if (cleanHash === '#/admin/inventory' || cleanHash === '#/admin/inventory-and-couverture-stocks') {
       pageTitle = 'Couverture Vault & Stocks';
-      pageKey = 'adminInventory';
+      adminPageContent = renderAdminInventoryPage();
+      attachEventsFn = attachAdminInventoryPageEvents;
     } else if (cleanHash === '#/admin/catalog' || cleanHash === '#/admin/menu-and-catalog-manager') {
       pageTitle = 'Menu & Catalog Manager';
-      pageKey = 'adminCatalog';
+      adminPageContent = renderAdminCatalogPage();
+      attachEventsFn = attachAdminCatalogPageEvents;
     } else if (cleanHash === '#/admin/queue' || cleanHash === '#/admin/kitchen-production-queue') {
       pageTitle = 'Kitchen Production Queue';
-      pageKey = 'adminBatches';
+      adminPageContent = renderAdminBatchesPage();
+      attachEventsFn = attachAdminBatchesPageEvents;
     } else if (cleanHash === '#/admin/zones' || cleanHash === '#/admin/settings-and-delivery-zones') {
       pageTitle = 'Zones & FSSAI Settings';
-      pageKey = 'adminInventory';
+      adminPageContent = renderAdminInventoryPage();
+      attachEventsFn = attachAdminInventoryPageEvents;
     } else {
+      // Default admin: batches & core operations
       pageTitle = 'Live Batches & Hearth Operations';
-      pageKey = 'adminBatches';
+      adminPageContent = renderAdminBatchesPage();
+      attachEventsFn = attachAdminBatchesPageEvents;
     }
 
     document.title = `Ganachly Atelier • ${pageTitle}`;
 
-    // Load module (instant if in memory cache)
-    const mod = await getPageModule(pageKey);
-    if (renderId !== currentRenderToken) return; // Stale navigation safeguard
-
-    let adminPageContent = '';
-    let attachEventsFn = null;
-
-    if (pageKey === 'adminOrders' && mod) {
-      adminPageContent = mod.renderAdminOrdersPage();
-      attachEventsFn = mod.attachAdminOrdersPageEvents;
-    } else if (pageKey === 'adminPatrons' && mod) {
-      adminPageContent = mod.renderAdminPatronsPage();
-      attachEventsFn = mod.attachAdminPatronsPageEvents;
-    } else if (pageKey === 'adminInventory' && mod) {
-      adminPageContent = mod.renderAdminInventoryPage();
-      attachEventsFn = mod.attachAdminInventoryPageEvents;
-    } else if (pageKey === 'adminCatalog' && mod) {
-      adminPageContent = mod.renderAdminCatalogPage();
-      attachEventsFn = mod.attachAdminCatalogPageEvents;
-    } else if (mod) {
-      adminPageContent = mod.renderAdminBatchesPage();
-      attachEventsFn = mod.attachAdminBatchesPageEvents;
-    }
-
     app.innerHTML = `
-      <div class="min-h-screen bg-espresso-deep text-on-surface flex">
+      <div class="min-h-screen bg-espresso-deep text-on-surface flex w-full">
         ${renderAdminSidebar(cleanHash)}
-        <div class="flex-1 flex flex-col md:pl-72">
+        <div class="flex-1 min-w-0 flex flex-col md:pl-72 w-full">
           ${renderAdminHeader()}
-          <main class="w-full pt-20 p-3.5 sm:p-5 md:p-space-lg min-h-[calc(100vh-4rem)]">
+          <main class="w-full min-w-0 pt-20 sm:pt-24 px-4 sm:px-6 md:px-8 pb-16 min-h-[calc(100vh-4rem)]">
             ${adminPageContent}
           </main>
         </div>
       </div>
     `;
 
+    // Attach admin layout & page events
     attachAdminSidebarEvents();
     attachAdminHeaderEvents();
     if (attachEventsFn) attachEventsFn();
@@ -163,57 +118,37 @@ async function renderRoute() {
   }
 
   // 2. STOREFRONT ROUTES
-  let pageKey = 'home';
+  let storefrontPageContent = '';
+  let attachStorefrontEventsFn = null;
   let pageTitle = 'Luxury Artisan Eggless Patisserie';
 
   if (cleanHash === '#/menu') {
     pageTitle = 'Atelier Menu & Formulations';
-    pageKey = 'menu';
+    storefrontPageContent = renderMenuPage();
+    attachStorefrontEventsFn = attachMenuPageEvents;
   } else if (cleanHash === '#/story' || cleanHash === '#/our-story') {
     pageTitle = 'Our Nocturne Story';
-    pageKey = 'story';
+    storefrontPageContent = renderStoryPage();
+    attachStorefrontEventsFn = attachStoryPageEvents;
   } else if (cleanHash === '#/gifting' || cleanHash === '#/gifting-and-bulk') {
     pageTitle = 'Corporate & Luxury Gifting';
-    pageKey = 'gifting';
+    storefrontPageContent = renderGiftingPage();
+    attachStorefrontEventsFn = attachGiftingPageEvents;
   } else if (cleanHash === '#/login' || cleanHash === '#/signin') {
     pageTitle = 'Authentication & Identity Portal';
-    pageKey = 'login';
+    storefrontPageContent = renderLoginPage();
+    attachStorefrontEventsFn = attachLoginPageEvents;
   } else if (cleanHash === '#/my-orders' || cleanHash === '#/track') {
     pageTitle = 'My Nocturne Orders';
-    pageKey = 'myOrders';
+    storefrontPageContent = renderMyOrdersPage();
+    attachStorefrontEventsFn = attachMyOrdersPageEvents;
   } else {
     pageTitle = 'Luxury Artisan Eggless Patisserie';
-    pageKey = 'home';
+    storefrontPageContent = renderHomePage();
+    attachStorefrontEventsFn = attachHomePageEvents;
   }
 
   document.title = `Ganachly • ${pageTitle}`;
-
-  // Load module (instant if cached)
-  const mod = await getPageModule(pageKey);
-  if (renderId !== currentRenderToken) return; // Stale navigation safeguard
-
-  let storefrontPageContent = '';
-  let attachStorefrontEventsFn = null;
-
-  if (pageKey === 'menu' && mod) {
-    storefrontPageContent = mod.renderMenuPage();
-    attachStorefrontEventsFn = mod.attachMenuPageEvents;
-  } else if (pageKey === 'story' && mod) {
-    storefrontPageContent = mod.renderStoryPage();
-    attachStorefrontEventsFn = mod.attachStoryPageEvents;
-  } else if (pageKey === 'gifting' && mod) {
-    storefrontPageContent = mod.renderGiftingPage();
-    attachStorefrontEventsFn = mod.attachGiftingPageEvents;
-  } else if (pageKey === 'login' && mod) {
-    storefrontPageContent = mod.renderLoginPage();
-    attachStorefrontEventsFn = mod.attachLoginPageEvents;
-  } else if (pageKey === 'myOrders' && mod) {
-    storefrontPageContent = mod.renderMyOrdersPage();
-    attachStorefrontEventsFn = mod.attachMyOrdersPageEvents;
-  } else if (mod) {
-    storefrontPageContent = mod.renderHomePage();
-    attachStorefrontEventsFn = mod.attachHomePageEvents;
-  }
 
   app.innerHTML = `
     <div class="min-h-screen bg-surface flex flex-col justify-between">
@@ -225,9 +160,6 @@ async function renderRoute() {
 
   attachStorefrontHeaderEvents();
   if (attachStorefrontEventsFn) attachStorefrontEventsFn();
-
-  // Prefetch other storefront pages in background for zero-latency subsequent clicks
-  prefetchCommonRoutes();
 }
 
 // Global page refresher for mutations

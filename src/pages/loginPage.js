@@ -195,13 +195,13 @@ export function attachLoginPageEvents() {
         return;
       }
 
-      const normalizedEmail = email.toLowerCase();
+      const normalizedEmail = email.toLowerCase().trim();
       const isAdminEmail = normalizedEmail === 'hardikkush987@gmail.com' || normalizedEmail === 'admin@ganachly.com';
 
       // 1. ADMIN AUTHENTICATION CHECK
       if (isAdminEmail) {
         if (password !== 'anoopritu' && password !== 'ganachly70') {
-          showToast('Incorrect password for Atelier Admin.', 'error', 'Security Gate');
+          showToast('Incorrect password for Atelier Admin. Please enter correct passcode.', 'error', 'Security Gate');
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = `<span>Sign In to Ganachly</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>`;
@@ -209,57 +209,53 @@ export function attachLoginPageEvents() {
           return;
         }
 
-        // Correct admin credentials: authenticate with Firebase & set admin role
-        try {
-          await firebaseRegisterOrLogin({
-            email: 'hardikkush987@gmail.com',
-            password: password,
-            name: name || 'Hardik Kushwaha',
-            phone: phone || '+91 98110 00192',
-            zone: 'Faridabad Atelier Central',
-            role: 'admin'
-          });
-        } catch (err) {
-          console.debug('Firebase admin auth notice:', err);
-        }
-
+        // Set admin session IMMEDIATELY in state & local cache
         const adminUser = auth.loginCustom({
           id: 'hardikkush987@gmail.com',
-          name: name || 'Hardik Kushwaha',
+          name: name || 'Hardik',
           role: 'admin',
           avatar: '👨‍🍳',
           phone: phone || '+91 98110 00192',
           zone: 'Faridabad Atelier Central'
         });
 
-        showToast(`Authenticated as Master Patissier Hardik! Redirecting to Atelier Portal...`, 'security');
-        // Redirect directly to admin portal
+        // Background non-blocking Firebase cloud sync
+        firebaseRegisterOrLogin({
+          email: 'hardikkush987@gmail.com',
+          password: password,
+          name: name || 'Hardik',
+          phone: phone || '+91 98110 00192',
+          zone: 'Faridabad Atelier Central',
+          role: 'admin'
+        }).catch(err => console.debug('Firebase admin background sync notice:', err));
+
+        showToast('Authenticated as Master Patissier Hardik! Redirecting to Atelier Portal...', 'security');
+        
+        // Immediate redirection to admin portal
         window.location.hash = '#/admin/batches';
         return;
       }
 
       // 2. REGULAR CUSTOMER AUTHENTICATION (any other email & password)
-      try {
-        await firebaseRegisterOrLogin({
-          email: email,
-          password: password,
-          name: name || email.split('@')[0],
-          phone: phone,
-          zone: zone,
-          role: 'customer'
-        });
-      } catch (err) {
-        console.debug('Firebase customer auth notice:', err);
-      }
-
+      const customerName = name || email.split('@')[0];
       const patronUser = auth.loginCustom({
-        id: email,
-        name: name || email.split('@')[0],
+        id: normalizedEmail,
+        name: customerName,
         role: 'customer',
         avatar: '🍫',
         phone: phone,
         zone: zone
       });
+
+      // Background non-blocking Firebase cloud sync
+      firebaseRegisterOrLogin({
+        email: normalizedEmail,
+        password: password,
+        name: customerName,
+        phone: phone,
+        zone: zone,
+        role: 'customer'
+      }).catch(err => console.debug('Firebase customer background sync notice:', err));
 
       showToast(`Welcome, ${patronUser.name}! Signed in to Ganachly.`, 'check_circle');
       // Redirect to menu storefront so user can immediately place orders

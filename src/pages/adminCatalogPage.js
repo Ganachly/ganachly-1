@@ -1,5 +1,6 @@
 import { store } from '../state/store.js';
 import { showToast } from '../components/toast.js';
+import { normalizeImageUrl, isGoogleDriveUrl } from '../utils/imageUtils.js';
 
 export function renderAdminCatalogPage() {
   const products = store.getProducts();
@@ -149,8 +150,30 @@ export function renderAdminCatalogPage() {
             </div>
           </div>
           <div>
-            <label class="text-xs font-label-badge uppercase tracking-wider text-gold-cream mb-1 block">Image URL</label>
-            <input id="form-product-image" type="url" placeholder="https://..." class="w-full px-4 py-2 rounded-lg bg-surface-container text-on-surface text-sm focus:outline-none border border-outline-variant/20">
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-label-badge uppercase tracking-wider text-gold-cream block">
+                Product Image (Direct URL or Google Drive Link)
+              </label>
+              <span id="drive-badge-indicator" class="hidden text-[10px] text-whatsapp-green font-bold uppercase tracking-wider items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">check_circle</span>
+                Google Drive Link Auto-Converted
+              </span>
+            </div>
+            <input id="form-product-image" type="text" placeholder="Paste image link or Google Drive sharing URL..." class="w-full px-4 py-2.5 rounded-lg bg-surface-container text-on-surface text-sm focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/20 font-mono text-xs">
+            <p class="text-[11px] text-on-surface-variant/75 mt-1 leading-relaxed">
+              Accepts web images & Google Drive sharing links (e.g. <span class="font-mono text-[10px] text-primary/80">drive.google.com/file/d/.../view?usp=sharing</span>). Ensure file permission is <b>"Anyone with the link can view"</b>.
+            </p>
+
+            <!-- Real-time Image Preview -->
+            <div id="image-preview-container" class="mt-2.5 hidden p-2.5 rounded-xl bg-surface-container-low border border-primary/20 items-center gap-3">
+              <div class="w-14 h-14 rounded-lg bg-surface-container overflow-hidden flex-shrink-0 border border-outline-variant/30 flex items-center justify-center">
+                <img id="image-preview-thumb" src="" alt="Preview" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';">
+              </div>
+              <div class="min-w-0 flex-1">
+                <span class="text-[11px] font-bold text-gold-cream block truncate" id="image-preview-status">Live Image Preview</span>
+                <span class="text-[10px] text-on-surface-variant truncate block font-mono" id="image-preview-url"></span>
+              </div>
+            </div>
           </div>
           <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-gold-hover to-primary-container text-espresso-deep font-label-action uppercase tracking-widest hover:brightness-110 transition-all font-bold">
             Commit Formulation to Catalog →
@@ -210,6 +233,50 @@ export function attachAdminCatalogPageEvents() {
     };
   });
 
+  const imageInput = document.getElementById('form-product-image');
+  const previewContainer = document.getElementById('image-preview-container');
+  const previewThumb = document.getElementById('image-preview-thumb');
+  const previewUrl = document.getElementById('image-preview-url');
+  const driveBadge = document.getElementById('drive-badge-indicator');
+
+  const updateImagePreview = (rawUrl) => {
+    if (!rawUrl || !rawUrl.trim()) {
+      if (previewContainer) {
+        previewContainer.classList.remove('flex');
+        previewContainer.classList.add('hidden');
+      }
+      if (driveBadge) {
+        driveBadge.classList.remove('flex');
+        driveBadge.classList.add('hidden');
+      }
+      return;
+    }
+    const normalized = normalizeImageUrl(rawUrl);
+    const isDrive = isGoogleDriveUrl(rawUrl);
+
+    if (driveBadge) {
+      if (isDrive) {
+        driveBadge.classList.remove('hidden');
+        driveBadge.classList.add('flex');
+      } else {
+        driveBadge.classList.remove('flex');
+        driveBadge.classList.add('hidden');
+      }
+    }
+
+    if (previewContainer && previewThumb) {
+      previewThumb.src = normalized;
+      if (previewUrl) previewUrl.textContent = normalized;
+      previewContainer.classList.remove('hidden');
+      previewContainer.classList.add('flex');
+    }
+  };
+
+  if (imageInput) {
+    imageInput.addEventListener('input', (e) => updateImagePreview(e.target.value));
+    imageInput.addEventListener('change', (e) => updateImagePreview(e.target.value));
+  }
+
   // Add Product button
   const addBtn = document.getElementById('btn-add-product');
   const addEmptyBtn = document.getElementById('btn-add-product-empty');
@@ -217,6 +284,7 @@ export function attachAdminCatalogPageEvents() {
     document.getElementById('product-modal-title').innerText = 'Add New Formulation';
     document.getElementById('form-product-id').value = '';
     form.reset();
+    updateImagePreview('');
     modal.classList.replace('hidden', 'flex');
   };
   if (addBtn && modal) {
@@ -241,6 +309,7 @@ export function attachAdminCatalogPageEvents() {
       document.getElementById('form-product-weight').value = p.weight || '';
       document.getElementById('form-product-tag').value = p.badge || p.tag || '';
       document.getElementById('form-product-image').value = p.image || '';
+      updateImagePreview(p.image || '');
       modal.classList.replace('hidden', 'flex');
     };
   });
@@ -250,6 +319,9 @@ export function attachAdminCatalogPageEvents() {
     form.onsubmit = (e) => {
       e.preventDefault();
       const id = document.getElementById('form-product-id').value;
+      const rawImage = document.getElementById('form-product-image').value.trim();
+      const finalImage = normalizeImageUrl(rawImage) || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';
+
       const data = {
         title: document.getElementById('form-product-title').value.trim(),
         price: parseFloat(document.getElementById('form-product-price').value),
@@ -257,16 +329,16 @@ export function attachAdminCatalogPageEvents() {
         desc: document.getElementById('form-product-desc').value.trim(),
         weight: document.getElementById('form-product-weight').value.trim() || '350g',
         badge: document.getElementById('form-product-tag').value.trim(),
-        image: document.getElementById('form-product-image').value.trim() || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80',
+        image: finalImage,
         stockStatus: 'in_stock'
       };
 
       if (id) {
         store.patchProduct(id, data);
-        showToast(`${data.title} updated`, 'check_circle');
+        showToast(`${data.title} updated with direct image link`, 'check_circle');
       } else {
         store.addProduct(data);
-        showToast(`${data.title} added to menu`, 'check_circle');
+        showToast(`${data.title} added with direct image link`, 'check_circle');
       }
 
       modal.classList.replace('flex', 'hidden');

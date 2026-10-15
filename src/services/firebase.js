@@ -288,17 +288,20 @@ export async function getUsersFromFirestore() {
  * Helper to register or sign in a user with Firebase Auth and sync their profile
  */
 export async function firebaseRegisterOrLogin({ email, password, name, phone, zone, role = 'customer' }) {
+  const normalizedEmail = (email || '').toLowerCase().trim();
+  const isHardik = normalizedEmail === 'hardikkush987@gmail.com' || normalizedEmail === 'admin@ganachly.com' || role === 'admin';
+  const effectiveRole = isHardik ? 'admin' : 'customer';
   let firebaseUser = null;
   const userPassword = password || 'ganachly70'; // Default secure password if none provided
 
   try {
-    const userCredential = await signInWithEmailAndPassword(authInstance, email, userPassword);
+    const userCredential = await signInWithEmailAndPassword(authInstance, normalizedEmail, userPassword);
     firebaseUser = userCredential.user;
     console.info('[Firebase Auth] Signed in successfully:', firebaseUser.email);
   } catch (signInErr) {
     if (signInErr.code === 'auth/user-not-found' || signInErr.code === 'auth/invalid-credential' || signInErr.code === 'auth/invalid-email') {
       try {
-        const createCredential = await createUserWithEmailAndPassword(authInstance, email, userPassword);
+        const createCredential = await createUserWithEmailAndPassword(authInstance, normalizedEmail, userPassword);
         firebaseUser = createCredential.user;
         console.info('[Firebase Auth] Created new user successfully:', firebaseUser.email);
       } catch (createErr) {
@@ -310,19 +313,22 @@ export async function firebaseRegisterOrLogin({ email, password, name, phone, zo
   }
 
   const userProfile = {
-    id: email,
+    id: normalizedEmail,
     uid: firebaseUser ? firebaseUser.uid : `usr-${Date.now()}`,
-    email: email,
-    name: name || 'Valued Patron',
-    role: role,
-    phone: phone || '+91 98110 00000',
-    zone: zone || 'Faridabad',
-    avatar: role === 'admin' ? '👨‍🍳' : '🍫',
+    email: normalizedEmail,
+    name: name || (isHardik ? 'Hardik' : normalizedEmail.split('@')[0]),
+    role: effectiveRole,
+    phone: phone || (isHardik ? '+91 98110 00192' : '+91 98110 00000'),
+    zone: zone || (isHardik ? 'Faridabad Atelier Central' : 'Faridabad'),
+    avatar: isHardik ? '👨‍🍳' : '🍫',
+    title: isHardik ? 'Master Patissier & Founder' : 'Delhi NCR Connoisseur',
     authProvider: firebaseUser ? 'firebase_email_password' : 'custom_patron',
     lastLoginAt: Date.now()
   };
 
-  await saveUserToFirestore(userProfile);
+  try {
+    await saveUserToFirestore(userProfile);
+  } catch (e) {}
   return userProfile;
 }
 
@@ -347,12 +353,20 @@ export function initAuthSessionListener(onUserRestored) {
   if (typeof window === 'undefined') return;
   onAuthStateChanged(authInstance, async (fbUser) => {
     if (fbUser && fbUser.email) {
+      const email = fbUser.email.toLowerCase().trim();
+      const isHardik = email === 'hardikkush987@gmail.com' || email === 'admin@ganachly.com' || email.includes('admin');
+
       try {
         const userDocRef = doc(db, 'users', fbUser.email);
         const userSnap = await getDoc(userDocRef);
         if (userSnap.exists()) {
           const profile = userSnap.data();
           if (profile && (profile.id || profile.email)) {
+            if (isHardik) {
+              profile.role = 'admin';
+              profile.avatar = '👨‍🍳';
+              profile.title = 'Master Patissier & Founder';
+            }
             console.info('[Firebase Auth] Restored user session from cache memory:', profile.email || profile.id);
             onUserRestored(profile);
             return;
@@ -365,9 +379,11 @@ export function initAuthSessionListener(onUserRestored) {
       onUserRestored({
         id: fbUser.email,
         email: fbUser.email,
-        name: fbUser.displayName || fbUser.email.split('@')[0],
-        role: fbUser.email.includes('admin') ? 'admin' : 'customer',
-        avatar: fbUser.email.includes('admin') ? '👨‍🍳' : '🍫'
+        name: fbUser.displayName || (isHardik ? 'Hardik' : fbUser.email.split('@')[0]),
+        role: isHardik ? 'admin' : 'customer',
+        avatar: isHardik ? '👨‍🍳' : '🍫',
+        title: isHardik ? 'Master Patissier & Founder' : 'Delhi NCR Connoisseur',
+        zone: isHardik ? 'Faridabad Atelier Central' : 'Faridabad'
       });
     }
   });

@@ -100,8 +100,6 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
           </div>
         </div>
 
-        </div>
-
         <div>
           <a href="#/" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-surface-container-high hover:bg-surface-bright text-gold-cream hover:text-primary transition-all text-xs font-label-action uppercase tracking-wider">
             <span class="material-symbols-outlined text-[16px]">visibility</span>
