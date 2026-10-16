@@ -26,11 +26,9 @@ export function renderStorefrontHeader(activeRoute = '#/') {
       <!-- Main Navigation Strip -->
       <div class="h-16 sm:h-20 max-w-[1280px] mx-auto px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 sm:gap-4">
         
-        <!-- Brand Monogram -->
+        <!-- Brand Name -->
         <div class="flex items-center gap-2 sm:gap-space-md">
-          <a class="flex items-center gap-2 group" href="#/">
-            <img alt="Ganachly Monogram Logo" class="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-105" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmKKxb9G0vCEynbGo92kEm76euV2guavQqyVY_OpM9mOgeWCBTfou1JHMYPtETOGOkdfxQSmwWrLT9SLHa0GvdJeucLjrTjVi32WzE61zZh0WNguRwjx1IVq06b4ejtFlDeQBc-_VMkUnX0BNpLhLaTf_JkSS771STZwpLGP8FKb-DjO5fuU019WjoGFX5nrT7ASIlNPWfjmQnU5cZc8S7XSN268HHkw1vxGByeW4hkaBmFOgfLgtNWw"/>
+          <a class="flex items-center group" href="#/">
             <span class="font-brittany text-primary group-hover:text-gold-light transition-colors text-2xl sm:text-3xl md:text-4xl leading-none pt-1 select-none">
               Ganachly
             </span>
@@ -64,7 +62,7 @@ export function renderStorefrontHeader(activeRoute = '#/') {
             <!-- Admin Quick Console Link -->
             <a href="#/admin/batches" class="px-3 py-1.5 rounded-lg bg-primary/20 text-primary border border-primary/40 hover:bg-primary hover:text-espresso-deep transition-all uppercase tracking-wider text-xs font-label-action flex items-center gap-1.5 font-bold shadow-sm">
               <span class="material-symbols-outlined text-[16px]">oven_gen</span>
-              <span>Atelier Console</span>
+              <span>Admin Console</span>
             </a>
           ` : ''}
 
@@ -121,7 +119,7 @@ export function renderStorefrontHeader(activeRoute = '#/') {
         ${isAdmin ? `
           <a class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/20 text-primary border border-primary/40 uppercase tracking-wider text-xs font-bold transition-colors" href="#/admin/batches">
             <span class="material-symbols-outlined text-[16px]">oven_gen</span>
-            <span>Atelier Console</span>
+            <span>Admin Console</span>
           </a>
         ` : ''}
       </div>

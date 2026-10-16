@@ -18,12 +18,8 @@ export function renderAdminLoginPage(targetPath = '#/admin/batches') {
       <!-- Main Portal Box -->
       <div class="w-full max-w-md mx-auto flex flex-col items-center">
 
-        <!-- Atelier Brand Monogram -->
+        <!-- Brand Title -->
         <a href="#/" class="flex flex-col items-center gap-2 group mb-6 text-center">
-          <div class="w-16 h-16 rounded-2xl bg-card-surface border border-primary/40 flex items-center justify-center p-2.5 shadow-2xl group-hover:scale-105 transition-transform">
-            <img alt="Ganachly Monogram Logo" class="h-full w-auto object-contain" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmKKxb9G0vCEynbGo92kEm76euV2guavQqyVY_OpM9mOgeWCBTfou1JHMYPtETOGOkdfxQSmwWrLT9SLHa0GvdJeucLjrTjVi32WzE61zZh0WNguRwjx1IVq06b4ejtFlDeQBc-_VMkUnX0BNpLhLaTf_JkSS771STZwpLGP8FKb-DjO5fuU019WjoGFX5nrT7ASIlNPWfjmQnU5cZc8S7XSN268HHkw1vxGByeW4hkaBmFOgfLgtNWw"/>
-          </div>
           <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-surface-container-high/90 border border-primary/20 mt-1">
             <span class="w-2 h-2 rounded-full bg-badge-weekend animate-pulse"></span>
             <span class="font-editorial-eyebrow text-gold-cream text-[11px] uppercase tracking-[0.25em]">
@@ -34,7 +30,7 @@ export function renderAdminLoginPage(targetPath = '#/admin/batches') {
             Ganachly
           </h1>
           <span class="font-editorial-eyebrow text-gold-cream text-[11px] uppercase tracking-[0.25em] -mt-1">
-            Atelier Backoffice
+            Kitchen Backoffice
           </span>
         </a>
 
@@ -50,14 +46,14 @@ export function renderAdminLoginPage(targetPath = '#/admin/batches') {
               Master Patissier Sign In
             </h2>
             <p class="font-editorial-quote text-xs text-on-surface-variant italic mt-1.5 leading-relaxed">
-              Enter your Atelier credentials to access live hearth oven telemetry, orders queue, couverture vault, and formulations.
+              Enter your Admin credentials to access live hearth oven telemetry, orders queue, couverture vault, and formulations.
             </p>
           </div>
 
           <!-- Error Alert Banner (Hidden by default) -->
           <div id="admin-login-error" class="hidden mb-4 p-3 rounded-xl bg-red-950/70 border border-red-500/40 text-red-200 text-xs flex items-center gap-2.5 animate-fadeIn">
             <span class="material-symbols-outlined text-red-400 text-[18px] flex-shrink-0">error</span>
-            <span id="admin-login-error-text">Invalid Atelier credentials. Please verify your ID and password.</span>
+            <span id="admin-login-error-text">Invalid credentials. Please verify your ID and password.</span>
           </div>
 
           <!-- Admin Login Form -->
@@ -66,7 +62,7 @@ export function renderAdminLoginPage(targetPath = '#/admin/batches') {
             <!-- Email / ID Input -->
             <div>
               <label for="admin-login-email" class="text-[11px] font-label-badge uppercase tracking-wider text-gold-cream mb-1.5 flex items-center justify-between">
-                <span>Atelier Master ID <span class="text-primary">*</span></span>
+                <span>Master Admin ID <span class="text-primary">*</span></span>
                 <span class="text-[10px] text-on-surface-variant font-mono lowercase">hardikkush987@gmail.com</span>
               </label>
               <div class="relative">
@@ -88,7 +84,7 @@ export function renderAdminLoginPage(targetPath = '#/admin/batches') {
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <label for="admin-login-pass" class="text-[11px] font-label-badge uppercase tracking-wider text-gold-cream">
-                  Atelier Passcode <span class="text-primary">*</span>
+                  Admin Passcode <span class="text-primary">*</span>
                 </label>
               </div>
               <div class="relative">
@@ -123,14 +119,14 @@ export function renderAdminLoginPage(targetPath = '#/admin/batches') {
               id="btn-admin-submit" 
               class="w-full mt-2 py-3.5 rounded-xl bg-gradient-to-r from-gold-hover via-primary-container to-primary text-espresso-deep font-label-action text-xs uppercase tracking-widest font-bold hover:brightness-110 active:scale-95 transition-all shadow-[0_4px_16px_rgba(200,151,58,0.25)] flex items-center justify-center gap-2">
               <span class="material-symbols-outlined text-[18px]">lock_open</span>
-              <span>Authenticate & Enter Atelier</span>
+              <span>Authenticate & Enter Console</span>
             </button>
           </form>
 
           <!-- Security Notice -->
           <div class="mt-5 pt-4 border-t border-primary/15 text-center">
             <p class="text-[11px] text-on-surface-variant font-mono">
-              Restricted to Master Patissier Admin & Atelier staff.
+              Restricted to Master Patissier Admin & authorized staff.
             </p>
           </div>
 
@@ -193,20 +189,20 @@ export function attachAdminLoginPageEvents(targetPath = '#/admin/batches') {
         // Authentication failed
         if (errorBox && errorText) {
           if (!isAdminId) {
-            errorText.textContent = 'Unrecognized Atelier ID. Only authorized Master Patissier accounts may sign in.';
+            errorText.textContent = 'Unrecognized Admin ID. Only authorized Master Patissier accounts may sign in.';
           } else {
-            errorText.textContent = 'Incorrect Atelier passcode. Please re-enter the authorized password.';
+            errorText.textContent = 'Incorrect passcode. Please re-enter the authorized password.';
           }
           errorBox.classList.remove('hidden');
         }
 
-        showToast('Atelier authentication failed. Please check ID and password.', 'error', 'Security Gate');
+        showToast('Authentication failed. Please check ID and password.', 'error', 'Security Gate');
 
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = `
             <span class="material-symbols-outlined text-[18px]">lock_open</span>
-            <span>Authenticate & Enter Atelier</span>
+            <span>Authenticate & Enter Console</span>
           `;
         }
         return;
@@ -221,8 +217,8 @@ export function attachAdminLoginPageEvents(targetPath = '#/admin/batches') {
         avatar: '👨‍🍳',
         title: 'Master Patissier & Founder',
         phone: '+91 98110 00192',
-        zone: 'Faridabad Atelier Central',
-        address: 'Ganachly Nocturne Atelier, Sector 15, Faridabad'
+        zone: 'Faridabad Central Kitchen',
+        address: 'Ganachly Nocturne Kitchen, Sector 15, Faridabad'
       };
 
       // Set user session in store & local persistent cache
@@ -235,12 +231,12 @@ export function attachAdminLoginPageEvents(targetPath = '#/admin/batches') {
         name: 'Hardik',
         role: 'admin',
         phone: '+91 98110 00192',
-        zone: 'Faridabad Atelier Central'
+        zone: 'Faridabad Central Kitchen'
       }).catch(err => {
         console.debug('[Firebase] Admin background sync status:', err?.message);
       });
 
-      showToast('Welcome, Master Patissier Hardik! Access granted to Atelier Operations.', 'check_circle', 'Atelier Access');
+      showToast('Welcome, Master Patissier Hardik! Access granted to Operations.', 'check_circle', 'Admin Access');
 
       // Determine destination route
       let dest = targetPath;

@@ -1,4 +1,4 @@
-export function showToast(message, icon = 'check_circle', subtitle = 'Ganachly Atelier Notification') {
+export function showToast(message, icon = 'check_circle', subtitle = 'Ganachly Notification') {
   if (typeof document === 'undefined' || !document.body) return;
   let toastContainer = document.getElementById('luxuryToastContainer');
   if (!toastContainer) {

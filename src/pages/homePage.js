@@ -53,12 +53,12 @@ export function attachHomePageEvents() {
           <div class="w-12 h-12 rounded-xl bg-card-surface border border-primary/30 flex items-center justify-center text-primary mx-auto mb-3">
             <span class="material-symbols-outlined text-[24px]">oven_gen</span>
           </div>
-          <h3 class="font-headline-md text-lg text-gold-cream uppercase tracking-wider">Atelier Formulations In Preparation</h3>
+          <h3 class="font-headline-md text-lg text-gold-cream uppercase tracking-wider">Confections In Preparation</h3>
           <p class="font-editorial-quote text-xs text-on-surface-variant italic mt-1 max-w-sm mx-auto">
             Micro-batch creations added in the Admin Catalog will dynamically appear here in real time.
           </p>
           <a href="#/menu" class="inline-flex items-center gap-1.5 mt-4 px-4 py-2 rounded-xl bg-primary text-espresso-deep font-label-action text-xs uppercase tracking-widest font-bold hover:brightness-110 transition-all">
-            <span>View Atelier Menu</span>
+            <span>View Menu</span>
             <span class="material-symbols-outlined text-[15px]">east</span>
           </a>
         </div>

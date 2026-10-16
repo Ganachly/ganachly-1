@@ -26,7 +26,7 @@ export function renderMyOrdersPage() {
           <div class="inline-flex items-center gap-space-sm px-space-md py-space-xs rounded-full bg-surface-container-high/60 backdrop-blur-md mb-space-md">
             <span class="w-2 h-2 rounded-full bg-whatsapp-green animate-ping"></span>
             <span class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream uppercase tracking-[0.25em]">
-              Real-time Nocturne Atelier Telemetry
+              Real-time Nocturne Telemetry
             </span>
           </div>
 
@@ -87,7 +87,7 @@ export function renderMyOrdersPage() {
             <div class="flex flex-wrap items-center justify-center gap-3">
               ${user.role === 'admin' ? `
                 <a href="#/admin/orders" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gold-hover to-primary text-espresso-deep font-label-action text-label-action uppercase tracking-widest font-bold hover:brightness-110 transition-all shadow-md">
-                  View Atelier Orders Console →
+                  View Orders Console →
                 </a>
               ` : `
                 <a href="#/menu" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gold-hover to-primary text-espresso-deep font-label-action text-label-action uppercase tracking-widest font-bold hover:brightness-110 transition-all shadow-md">

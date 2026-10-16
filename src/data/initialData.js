@@ -24,7 +24,7 @@ export const initialPersonas = [
     avatar: '👨‍🍳',
     badgeClass: 'bg-primary text-espresso-deep',
     phone: '+91 98110 00192',
-    zone: 'Faridabad Atelier Central',
+    zone: 'Faridabad Central Kitchen',
     description: 'Full master access: Live Batches, Dispatch Console, Catalog Manager & Couverture Stocks Vault.'
   }
 ];
@@ -36,7 +36,7 @@ export const initialInventory = [];
 export const initialBatches = [];
 
 export const initialDeliveryZones = [
-  { id: 'fbd', name: 'Faridabad (All Sectors & Neharpar)', fee: 0, tag: 'Free Atelier Express', time: '40–60 mins' },
+  { id: 'fbd', name: 'Faridabad (All Sectors & Neharpar)', fee: 0, tag: 'Free Express Delivery', time: '40–60 mins' },
   { id: 'ggn', name: 'Gurugram (Cyber City, Golf Course, Sohna Rd)', fee: 120, tag: 'Express Courier', time: '60–85 mins' },
   { id: 'sdel', name: 'South & Central Delhi (GK, Defence Colony, CP)', fee: 100, tag: 'Evening Runner', time: '50–70 mins' },
   { id: 'noida', name: 'Noida & Greater Noida (Sec 18 to 137)', fee: 110, tag: 'Express Courier', time: '55–75 mins' },

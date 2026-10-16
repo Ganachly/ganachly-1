@@ -177,7 +177,7 @@ export function renderAdminPatronsPage() {
           <div>
             <span class="text-[11px] font-label-badge uppercase tracking-wider text-on-surface-variant block">Active Ordering Patrons</span>
             <span class="font-headline-lg text-3xl text-gold-cream font-bold mt-1 block">${customersWithOrders}</span>
-            <span class="text-[11px] text-whatsapp-green mt-0.5 block">Placed orders with atelier</span>
+            <span class="text-[11px] text-whatsapp-green mt-0.5 block">Placed orders with us</span>
           </div>
           <div class="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center text-whatsapp-green border border-whatsapp-green/20">
             <span class="material-symbols-outlined text-[22px]">loyalty</span>
