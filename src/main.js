@@ -48,7 +48,7 @@ function renderRoute() {
   if (cleanHash.startsWith('#/admin')) {
     dismissGoogleOneTap();
 
-    // If unauthenticated / not admin, render dedicated Atelier Admin Login directly on /admin
+    // If unauthenticated / not admin, render dedicated Admin Login directly on /admin
     if (!auth.isAdmin()) {
       document.title = 'Admin Login • Ganachly Operations';
       app.innerHTML = renderAdminLoginPage(cleanHash);

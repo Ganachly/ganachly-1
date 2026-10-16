@@ -17,7 +17,7 @@ export const defaultGuestUser = {
 export const initialPersonas = [
   {
     id: 'hardikkush987@gmail.com',
-    code: 'ADMIN-ATELIER-01',
+    code: 'ADMIN-GANACHLY-01',
     name: 'Hardik',
     title: 'Master Patissier & Founder',
     role: 'admin',

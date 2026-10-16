@@ -284,7 +284,7 @@ class GanachlyStore {
   loginWithCustomId({ id, code, name, role, avatar, phone, zone, address }) {
     const isHardik = (id || '').toLowerCase() === 'hardikkush987@gmail.com' || (id || '').toLowerCase() === 'admin@ganachly.com';
     const effectiveRole = isHardik ? 'admin' : (role || 'customer');
-    const uniqueCustomerCode = code || (isHardik ? 'ADMIN-ATELIER-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`);
+    const uniqueCustomerCode = code || (isHardik ? 'ADMIN-GANACHLY-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`);
     const newUser = {
       id: id || (isHardik ? 'hardikkush987@gmail.com' : 'patron@ganachly.com'),
       code: uniqueCustomerCode,
