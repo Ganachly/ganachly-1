@@ -39,7 +39,7 @@ export const auth = {
   },
 
   /**
-   * Renders the Atelier Security Gate when a non-admin tries to enter /admin
+   * Renders the Admin Security Gate when a non-admin tries to enter /admin
    */
   renderRestrictedGate(targetPath = '#/admin') {
     const user = store.getCurrentUser();

@@ -195,7 +195,7 @@ export async function saveInventoryToFirestore(inventoryData) {
  */
 export async function saveSettingsToFirestore(settingsData) {
   try {
-    const settingsRef = doc(db, 'settings', 'atelier_config');
+    const settingsRef = doc(db, 'settings', 'kitchen_config');
     const sanitized = sanitizeForFirestore({
       ...settingsData,
       updatedAt: serverTimestamp()
@@ -315,7 +315,7 @@ export async function firebaseRegisterOrLogin({ email, password, name, phone, zo
   const userProfile = {
     id: normalizedEmail,
     uid: firebaseUser ? firebaseUser.uid : `usr-${Date.now()}`,
-    code: code || (isHardik ? 'ADMIN-ATELIER-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`),
+    code: code || (isHardik ? 'ADMIN-GANACHLY-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`),
     email: normalizedEmail,
     name: name || (isHardik ? 'Hardik' : normalizedEmail.split('@')[0]),
     role: effectiveRole,
