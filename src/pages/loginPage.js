@@ -22,12 +22,8 @@ export function renderLoginPage() {
       <!-- Main Container -->
       <div class="w-full max-w-md mx-auto flex flex-col items-center">
 
-        <!-- Brand Monogram & Eyebrow -->
+        <!-- Brand Header & Eyebrow -->
         <a href="#/" class="flex flex-col items-center gap-2 group mb-6 text-center">
-          <div class="w-14 h-14 rounded-2xl bg-card-surface border border-primary/30 flex items-center justify-center p-2 shadow-2xl group-hover:scale-105 transition-transform">
-            <img alt="Ganachly Monogram Logo" class="h-full w-auto object-contain" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmKKxb9G0vCEynbGo92kEm76euV2guavQqyVY_OpM9mOgeWCBTfou1JHMYPtETOGOkdfxQSmwWrLT9SLHa0GvdJeucLjrTjVi32WzE61zZh0WNguRwjx1IVq06b4ejtFlDeQBc-_VMkUnX0BNpLhLaTf_JkSS771STZwpLGP8FKb-DjO5fuU019WjoGFX5nrT7ASIlNPWfjmQnU5cZc8S7XSN268HHkw1vxGByeW4hkaBmFOgfLgtNWw"/>
-          </div>
           <h1 class="font-brittany text-4xl sm:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-gold-light via-primary to-primary-container leading-tight pt-1 select-none">
             Ganachly
           </h1>
@@ -261,7 +257,7 @@ export function attachLoginPageEvents() {
 
       // 1. ADMIN AUTHENTICATION MUST OCCUR ON /admin PORTAL
       if (isAdminEmail) {
-        showToast('Atelier Master Patissier accounts must log in via the /admin portal.', 'info', 'Atelier Portal');
+        showToast('Master Patissier Admin accounts must log in via the /admin portal.', 'info', 'Admin Portal');
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = `<span>Sign In as Patron</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>`;

@@ -7,8 +7,8 @@ const STAGES = [
   { key: 'oven',      label: 'In Oven',      color: 'text-badge-weekend bg-badge-weekend/20' },
   { key: 'sliced',    label: 'Sliced',       color: 'text-secondary bg-secondary/20' },
   { key: 'boxed',     label: 'Boxed',        color: 'text-secondary bg-secondary/20' },
-  { key: 'dispatch',  label: 'Dispatched',   color: 'text-primary bg-primary/20' },
-  { key: 'completed', label: 'Delivered',    color: 'text-whatsapp-green bg-whatsapp-green/20' },
+  { key: 'dispatch',  label: 'Ready / Pickup',   color: 'text-primary bg-primary/20' },
+  { key: 'completed', label: 'Completed',    color: 'text-whatsapp-green bg-whatsapp-green/20' },
 ];
 
 let currentFilters = {

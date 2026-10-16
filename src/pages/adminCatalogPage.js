@@ -11,7 +11,7 @@ export function renderAdminCatalogPage() {
       <!-- PAGE HEADER -->
       <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-sm">
         <div>
-          <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-widest text-[11px]">Nocturne Atelier Menu & Formulary</span>
+          <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-widest text-[11px]">Nocturne Menu & Catalog</span>
           <h1 class="font-headline-lg text-headline-lg text-gold-light mt-1">Confectionery Catalog Manager</h1>
           <p class="font-body-md text-body-md text-on-surface-variant text-sm mt-0.5">
             ${products.length} artisanal formulations · Live pricing and stock allocation across Delhi NCR
@@ -48,7 +48,7 @@ export function renderAdminCatalogPage() {
               <div class="absolute inset-0 bg-gradient-to-t from-espresso-panel via-transparent to-black/30"></div>
               <div class="absolute top-3 left-3 flex flex-wrap gap-1">
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-label-badge uppercase tracking-wider bg-black/60 backdrop-blur-md text-gold-light border border-primary/20">
-                  ${p.category || 'Atelier'}
+                  ${p.category || 'Specialty'}
                 </span>
                 ${p.badge ? `
                   <span class="px-2 py-0.5 rounded-full text-[10px] font-label-badge uppercase tracking-wider bg-primary text-espresso-deep font-bold">
@@ -259,7 +259,7 @@ export function attachAdminCatalogPageEvents() {
     btn.onclick = () => {
       const id = btn.getAttribute('data-id');
       const p = store.getProductById(id);
-      if (confirm(`Remove "${p?.title}" from the atelier catalog?`)) {
+      if (confirm(`Remove "${p?.title}" from the catalog?`)) {
         store.removeProduct(id);
         showToast(`${p?.title} removed from catalog`, 'delete');
         window.refreshCurrentPage();

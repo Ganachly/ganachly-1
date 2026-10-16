@@ -26,7 +26,7 @@ export function renderMyOrdersPage() {
           <div class="inline-flex items-center gap-space-sm px-space-md py-space-xs rounded-full bg-surface-container-high/60 backdrop-blur-md mb-space-md">
             <span class="w-2 h-2 rounded-full bg-whatsapp-green animate-ping"></span>
             <span class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream uppercase tracking-[0.25em]">
-              Real-time Nocturne Atelier Telemetry
+              Real-time Nocturne Telemetry
             </span>
           </div>
 
@@ -87,7 +87,7 @@ export function renderMyOrdersPage() {
             <div class="flex flex-wrap items-center justify-center gap-3">
               ${user.role === 'admin' ? `
                 <a href="#/admin/orders" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gold-hover to-primary text-espresso-deep font-label-action text-label-action uppercase tracking-widest font-bold hover:brightness-110 transition-all shadow-md">
-                  View Atelier Orders Console →
+                  View Orders Console →
                 </a>
               ` : `
                 <a href="#/menu" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gold-hover to-primary text-espresso-deep font-label-action text-label-action uppercase tracking-widest font-bold hover:brightness-110 transition-all shadow-md">
@@ -112,8 +112,8 @@ export function renderMyOrdersPage() {
                 { key: 'new', label: 'Order Logged', icon: 'receipt' },
                 { key: 'oven', label: 'In Deck Oven', icon: 'oven_gen' },
                 { key: 'boxed', label: 'Glazed & Boxed', icon: 'inventory_2' },
-                { key: 'dispatch', label: 'NCR Courier Dispatch', icon: 'local_shipping' },
-                { key: 'completed', label: 'Delivered', icon: 'verified' }
+                { key: 'dispatch', label: 'Ready for Service', icon: 'restaurant' },
+                { key: 'completed', label: 'Completed', icon: 'verified' }
               ];
 
               const currentStageIndex = order.stage === 'new' ? 0 : 
@@ -212,12 +212,12 @@ export function renderMyOrdersPage() {
 
                     <div>
                       <span class="font-label-badge text-[10px] text-on-surface-variant uppercase tracking-wider block mb-1.5">
-                        NCR Courier Destination
+                        Service Details
                       </span>
                       <div class="p-3 rounded-xl bg-card-surface border border-outline-variant/20 space-y-1">
                         <p class="font-semibold text-on-surface">${order.customerName}</p>
                         <p class="text-xs text-on-surface-variant leading-relaxed">${order.address}</p>
-                        <p class="text-xs text-primary font-mono mt-1">${order.zone} • ${order.phone}</p>
+                        <p class="text-xs text-primary font-mono mt-1">${order.serviceType || order.zone || 'Dine-In'} • ${order.phone}</p>
                       </div>
                     </div>
                   </div>
