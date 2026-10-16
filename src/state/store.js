@@ -236,7 +236,7 @@ class GanachlyStore {
       user.avatar = '👨‍🍳';
       user.title = 'Master Patissier & Founder';
       user.badgeClass = 'bg-primary text-espresso-deep';
-      user.zone = 'Faridabad Atelier Central';
+      user.zone = 'Faridabad Central Kitchen';
     }
     this.state.currentUser = user;
     
@@ -284,7 +284,7 @@ class GanachlyStore {
   loginWithCustomId({ id, code, name, role, avatar, phone, zone, address }) {
     const isHardik = (id || '').toLowerCase() === 'hardikkush987@gmail.com' || (id || '').toLowerCase() === 'admin@ganachly.com';
     const effectiveRole = isHardik ? 'admin' : (role || 'customer');
-    const uniqueCustomerCode = code || (isHardik ? 'ADMIN-ATELIER-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`);
+    const uniqueCustomerCode = code || (isHardik ? 'ADMIN-GANACHLY-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`);
     const newUser = {
       id: id || (isHardik ? 'hardikkush987@gmail.com' : 'patron@ganachly.com'),
       code: uniqueCustomerCode,
@@ -294,7 +294,7 @@ class GanachlyStore {
       avatar: avatar || (isHardik ? '👨‍🍳' : '🍫'),
       badgeClass: isHardik ? 'bg-primary text-espresso-deep' : 'bg-secondary text-espresso-deep',
       phone: phone || (isHardik ? '+91 98110 00192' : '+91 98110 00000'),
-      zone: zone || (isHardik ? 'Faridabad Atelier Central' : 'Delhi NCR'),
+      zone: zone || (isHardik ? 'Faridabad Central Kitchen' : 'Delhi NCR'),
       address: address || 'Faridabad, Delhi NCR',
       description: isHardik ? 'Full master access: Live Batches, Dispatch Console, Catalog Manager & Stocks.' : `Connoisseur Patron (${uniqueCustomerCode})`
     };
@@ -472,17 +472,17 @@ class GanachlyStore {
     );
   }
 
-  placeOrder({ customerName, customerEmail, customerPhone, address, zone, specialNote, paymentMethod, paymentRef }) {
+  placeOrder({ customerName, customerEmail, customerPhone, address, zone, serviceType, specialNote, paymentMethod, paymentRef }) {
     if (this.state.cart.length === 0) return null;
 
-    const zoneObj = this.state.deliveryZones.find(z => z.id === zone) || this.state.deliveryZones[0];
     const subtotal = this.getCartSubtotal();
-    const deliveryFee = zoneObj.fee;
-    const total = subtotal + deliveryFee;
+    const deliveryFee = 0; // Dine-In and Takeaway have zero delivery charges
+    const total = subtotal;
     const timestampSuffix = Date.now().toString().slice(-4);
     const randomCode = Math.floor(100 + Math.random() * 900);
     const orderId = `GAN-${timestampSuffix}-${randomCode}`;
     const user = this.getCurrentUser();
+    const effectiveServiceType = serviceType || zone || 'Dine-In';
 
     // Map items
     const orderItems = this.state.cart.map(item => ({
@@ -500,20 +500,21 @@ class GanachlyStore {
       customerEmail: customerEmail || user.id || 'patron@ganachly.com',
       customerId: user.code || `CUST-${Math.floor(1000 + Math.random() * 9000)}`,
       phone: customerPhone || user.phone || '+91 98110 00000',
-      zone: zoneObj.name,
-      address: address || user.address || 'Faridabad, Delhi NCR',
+      serviceType: effectiveServiceType,
+      zone: effectiveServiceType,
+      address: address || (effectiveServiceType === 'Dine-In' ? 'Dine-In (Table Service)' : 'Takeaway (Self Pickup)'),
       time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) + ' • Storefront',
       timestamp: Date.now(),
       placedAt: new Date().toISOString(),
       channel: 'web',
-      specialNote: specialNote || 'Handcrafted fresh for evening bake dispatch.',
+      specialNote: specialNote || `Fresh order for ${effectiveServiceType}`,
       items: orderItems,
       subtotal,
-      deliveryFee,
+      deliveryFee: 0,
       total,
       paymentMethod: paymentMethod || 'upi',
-      paymentStatus: paymentMethod === 'cod' ? 'Cash on Delivery (Pending)' : 'UPI Verified Instant',
-      paymentRef: paymentRef || (paymentMethod === 'cod' ? 'COD-NCR-RUN' : `UPI-${Math.floor(1000000000 + Math.random() * 9000000000)}`),
+      paymentStatus: paymentMethod === 'cod' ? 'Cash on Pickup / Pay at Counter' : 'UPI Verified Instant',
+      paymentRef: paymentRef || (paymentMethod === 'cod' ? 'PAY-AT-COUNTER' : `UPI-${Math.floor(1000000000 + Math.random() * 9000000000)}`),
       stage: 'oven', // Starts immediately in the Convection Oven Queue!
       stageLabel: 'In Kitchen Deck Oven',
       couvertureUsedKg: approxCouvertureKg
@@ -563,7 +564,7 @@ class GanachlyStore {
       timestamp: now,
       placedAt: new Date(now).toISOString(),
       channel: 'whatsapp',
-      specialNote: desc || 'Direct WhatsApp order logged by atelier team.',
+      specialNote: desc || 'Direct WhatsApp order logged by kitchen team.',
       items: [
         {
           id: 'wa-item',

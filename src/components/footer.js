@@ -29,13 +29,13 @@ export function renderStorefrontFooter() {
           </div>
 
           <div class="space-y-space-md">
-            <h4 class="font-headline-sm text-headline-sm text-primary tracking-wide uppercase">Atelier & Gifting</h4>
+            <h4 class="font-headline-sm text-headline-sm text-primary tracking-wide uppercase">Patisserie & Gifting</h4>
             <ul class="space-y-space-xs font-body-md text-body-md text-on-surface-variant">
               <li class="hover:text-gold-cream transition-colors"><a href="#/story">Founder Hardik's Manifesto</a></li>
               <li class="hover:text-gold-cream transition-colors"><a href="#/gifting">Bespoke Corporate Hampers</a></li>
               <li class="hover:text-gold-cream transition-colors"><a href="#/gifting">Broken Bar Sleeve Boxes</a></li>
               <li class="hover:text-gold-cream transition-colors"><a href="#/my-orders">Track Live Nocturne Run</a></li>
-              <li class="hover:text-gold-cream transition-colors"><a href="#/admin">Atelier Operations Backoffice</a></li>
+              <li class="hover:text-gold-cream transition-colors"><a href="#/admin">Admin Backoffice</a></li>
             </ul>
           </div>
 
@@ -45,13 +45,13 @@ export function renderStorefrontFooter() {
               Connect directly with the head baker for customized date night assortments and event orders.
             </p>
             <a class="inline-flex items-center gap-space-xs bg-whatsapp-green text-surface-container-lowest font-label-action text-label-action px-space-md py-space-sm rounded-xl hover:opacity-95 transition-opacity" 
-              href="https://wa.me/919811000192?text=Hello%20Chef%20Hardik,%20I%20would%20like%20to%20order%20from%20Ganachly%20Atelier" rel="noopener noreferrer" target="_blank">
+              href="https://wa.me/919811000192?text=Hello%20Chef%20Hardik,%20I%20would%20like%20to%20order%20from%20Ganachly" rel="noopener noreferrer" target="_blank">
               <span class="material-symbols-outlined text-[20px]">chat</span>
               WhatsApp Quick Order
             </a>
             <div class="pt-space-xs text-on-surface-variant font-body-sm text-body-sm">
               <p class="tracking-wider">Instagram: <span class="text-gold-cream">@ganachly</span></p>
-              <p class="tracking-wider">Faridabad Atelier, Sector 15, Haryana</p>
+              <p class="tracking-wider">Faridabad Kitchen, Sector 15, Haryana</p>
             </div>
           </div>
 

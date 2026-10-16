@@ -216,7 +216,7 @@ export function renderProfileModal() {
             ${isAdmin ? `
               <a href="#/admin/batches" id="btn-modal-admin" class="px-3.5 py-2 rounded-xl bg-primary text-espresso-deep hover:brightness-110 transition-all text-xs font-label-action uppercase tracking-wider flex items-center gap-1.5 font-bold shadow-sm">
                 <span class="material-symbols-outlined text-[16px]">oven_gen</span>
-                <span>Atelier Console</span>
+                <span>Admin Console</span>
               </a>
             ` : ''}
           </div>

@@ -22,7 +22,7 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
         <div class="h-16 px-space-lg flex items-center justify-between bg-surface-container-lowest/60 border-b border-primary/10">
           <div class="flex flex-col">
             <span class="font-brittany text-2xl sm:text-3xl tracking-normal text-primary leading-tight select-none">Ganachly</span>
-            <span class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream tracking-widest uppercase text-[10px]">Atelier Operations</span>
+            <span class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream tracking-widest uppercase text-[10px]">Kitchen Operations</span>
           </div>
           <div class="flex items-center gap-2">
             <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-high">
@@ -38,7 +38,7 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
         <!-- Navigation -->
         <div class="px-space-md py-space-sm">
           <div class="px-space-sm py-2 text-on-surface-variant/60 font-label-badge text-label-badge uppercase tracking-widest">
-            Atelier Management
+            Kitchen Management
           </div>
           
           <nav class="flex flex-col gap-1">
