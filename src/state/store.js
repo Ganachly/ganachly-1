@@ -236,7 +236,7 @@ class GanachlyStore {
       user.avatar = '👨‍🍳';
       user.title = 'Master Patissier & Founder';
       user.badgeClass = 'bg-primary text-espresso-deep';
-      user.zone = 'Faridabad Atelier Central';
+      user.zone = 'Faridabad Central Kitchen';
     }
     this.state.currentUser = user;
     
@@ -294,7 +294,7 @@ class GanachlyStore {
       avatar: avatar || (isHardik ? '👨‍🍳' : '🍫'),
       badgeClass: isHardik ? 'bg-primary text-espresso-deep' : 'bg-secondary text-espresso-deep',
       phone: phone || (isHardik ? '+91 98110 00192' : '+91 98110 00000'),
-      zone: zone || (isHardik ? 'Faridabad Atelier Central' : 'Delhi NCR'),
+      zone: zone || (isHardik ? 'Faridabad Central Kitchen' : 'Delhi NCR'),
       address: address || 'Faridabad, Delhi NCR',
       description: isHardik ? 'Full master access: Live Batches, Dispatch Console, Catalog Manager & Stocks.' : `Connoisseur Patron (${uniqueCustomerCode})`
     };
@@ -563,7 +563,7 @@ class GanachlyStore {
       timestamp: now,
       placedAt: new Date(now).toISOString(),
       channel: 'whatsapp',
-      specialNote: desc || 'Direct WhatsApp order logged by atelier team.',
+      specialNote: desc || 'Direct WhatsApp order logged by kitchen team.',
       items: [
         {
           id: 'wa-item',

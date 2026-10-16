@@ -56,11 +56,11 @@ export const auth = {
 
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/80 mb-space-sm">
             <span class="w-2 h-2 rounded-full bg-badge-weekend animate-pulse"></span>
-            <span class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream uppercase tracking-widest text-[11px]">Nocturne Atelier Access Gate</span>
+            <span class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream uppercase tracking-widest text-[11px]">Admin Access Gate</span>
           </div>
 
           <h2 class="font-headline-lg text-headline-lg text-gold-light uppercase tracking-wider mb-space-xs">
-            Atelier Admin Only
+            Admin Portal Only
           </h2>
 
           <p class="font-editorial-quote text-body-md text-on-surface-variant italic mb-space-md leading-relaxed">
@@ -85,7 +85,7 @@ export const auth = {
           <div class="space-y-space-sm">
             <a href="#/admin" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-gold-hover to-primary-container text-espresso-deep font-label-action text-label-action uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 font-bold">
               <span class="material-symbols-outlined text-[18px]">key</span>
-              <span>Sign In with Atelier Credentials (/admin)</span>
+              <span>Sign In with Admin Credentials (/admin)</span>
             </a>
 
             <a href="#/" class="inline-block pt-2 text-on-surface-variant hover:text-primary font-body-sm text-body-sm transition-colors">

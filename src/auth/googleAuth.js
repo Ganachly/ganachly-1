@@ -49,7 +49,7 @@ export function handleGoogleCredentialResponse(response) {
     role: isAdmin ? 'admin' : 'customer',
     avatar: payload.picture || (isAdmin ? '👨‍🍳' : '👤'),
     phone: '',
-    zone: isAdmin ? 'Faridabad Atelier Central' : 'Faridabad (Sector 14-21)'
+    zone: isAdmin ? 'Faridabad Central Kitchen' : 'Faridabad (Sector 14-21)'
   });
 
   if (isAdmin) {

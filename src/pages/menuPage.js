@@ -157,7 +157,7 @@ export function renderMenuPage() {
         <!-- Clean Header -->
         <div class="text-center pt-2 pb-4">
           <h1 class="font-display-hero text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-gold-light via-primary to-primary-container leading-none uppercase select-none drop-shadow-lg" style="font-size: clamp(3rem, 6.5vw, 5.5rem); line-height: 1.05;">
-            THE ATELIER MENU
+            THE PATISSERIE MENU
           </h1>
         </div>
 
