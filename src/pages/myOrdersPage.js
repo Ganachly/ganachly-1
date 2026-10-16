@@ -112,8 +112,8 @@ export function renderMyOrdersPage() {
                 { key: 'new', label: 'Order Logged', icon: 'receipt' },
                 { key: 'oven', label: 'In Deck Oven', icon: 'oven_gen' },
                 { key: 'boxed', label: 'Glazed & Boxed', icon: 'inventory_2' },
-                { key: 'dispatch', label: 'NCR Courier Dispatch', icon: 'local_shipping' },
-                { key: 'completed', label: 'Delivered', icon: 'verified' }
+                { key: 'dispatch', label: 'Ready for Service', icon: 'restaurant' },
+                { key: 'completed', label: 'Completed', icon: 'verified' }
               ];
 
               const currentStageIndex = order.stage === 'new' ? 0 : 
@@ -212,12 +212,12 @@ export function renderMyOrdersPage() {
 
                     <div>
                       <span class="font-label-badge text-[10px] text-on-surface-variant uppercase tracking-wider block mb-1.5">
-                        NCR Courier Destination
+                        Service Details
                       </span>
                       <div class="p-3 rounded-xl bg-card-surface border border-outline-variant/20 space-y-1">
                         <p class="font-semibold text-on-surface">${order.customerName}</p>
                         <p class="text-xs text-on-surface-variant leading-relaxed">${order.address}</p>
-                        <p class="text-xs text-primary font-mono mt-1">${order.zone} • ${order.phone}</p>
+                        <p class="text-xs text-primary font-mono mt-1">${order.serviceType || order.zone || 'Dine-In'} • ${order.phone}</p>
                       </div>
                     </div>
                   </div>

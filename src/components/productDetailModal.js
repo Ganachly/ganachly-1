@@ -60,9 +60,20 @@ export function openProductDetailModal(productId) {
           </div>
 
           <div class="pt-2 flex items-center justify-between gap-3">
-            <button id="modalAddOrderBtn" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-hover to-primary-container text-espresso-deep font-label-action text-label-action uppercase tracking-widest font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2">
+            <div class="flex items-center gap-1.5 bg-surface-container-low border border-primary/30 rounded-xl px-2.5 py-1">
+              <span class="text-[10px] text-on-surface-variant font-label-badge uppercase font-bold mr-1">Qty</span>
+              <button id="modalQtyMinus" class="w-7 h-7 rounded-lg bg-surface-container-high hover:bg-surface-bright text-gold-cream font-bold text-sm flex items-center justify-center transition-all">
+                −
+              </button>
+              <span id="modalQtyDisplay" class="font-body-md text-gold-cream font-bold text-sm min-w-[1.25rem] text-center">1</span>
+              <button id="modalQtyPlus" class="w-7 h-7 rounded-lg bg-surface-container-high hover:bg-surface-bright text-gold-cream font-bold text-sm flex items-center justify-center transition-all">
+                +
+              </button>
+            </div>
+
+            <button id="modalAddOrderBtn" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-hover to-primary-container text-espresso-deep font-label-action text-xs uppercase tracking-widest font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-1.5">
               <span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
-              <span>Add to Order (₹${product.price})</span>
+              <span id="modalAddBtnText">Add (₹${product.price})</span>
             </button>
           </div>
         </div>
@@ -71,9 +82,15 @@ export function openProductDetailModal(productId) {
     </div>
   `;
 
+  let selectedQty = 1;
+
   const closeBtn = document.getElementById('closeProductDetailModal');
   const backdrop = document.getElementById('productModalBackdrop');
   const addBtn = document.getElementById('modalAddOrderBtn');
+  const minusBtn = document.getElementById('modalQtyMinus');
+  const plusBtn = document.getElementById('modalQtyPlus');
+  const qtyDisplay = document.getElementById('modalQtyDisplay');
+  const addBtnText = document.getElementById('modalAddBtnText');
 
   const close = () => {
     modalEl.innerHTML = '';
@@ -85,10 +102,26 @@ export function openProductDetailModal(productId) {
       if (e.target === backdrop) close();
     };
   }
+
+  if (minusBtn && plusBtn && qtyDisplay && addBtnText) {
+    minusBtn.onclick = () => {
+      if (selectedQty > 1) {
+        selectedQty--;
+        qtyDisplay.textContent = selectedQty;
+        addBtnText.textContent = `Add ${selectedQty} (₹${product.price * selectedQty})`;
+      }
+    };
+    plusBtn.onclick = () => {
+      selectedQty++;
+      qtyDisplay.textContent = selectedQty;
+      addBtnText.textContent = `Add ${selectedQty} (₹${product.price * selectedQty})`;
+    };
+  }
+
   if (addBtn) {
     addBtn.onclick = () => {
-      store.addToCart(product.id, 1);
-      showToast(`${product.title} added to bag`, 'shopping_bag');
+      store.addToCart(product.id, selectedQty);
+      showToast(`Added ${selectedQty}x ${product.title} to bag`, 'shopping_bag');
       close();
     };
   }

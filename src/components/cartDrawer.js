@@ -74,13 +74,28 @@ export function renderCartDrawer() {
             <!-- Order Details Form -->
             <div class="mt-6 p-4 rounded-xl bg-surface-container-low border border-primary/15 space-y-3">
               <span class="font-label-badge text-label-badge uppercase tracking-widest text-primary block">
-                Order Details
+                Order Options
               </span>
 
+              <!-- Dine-In vs Takeaway Selector -->
               <div>
-                <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Pickup / Contact Address</label>
-                <textarea id="checkoutAddressInput" rows="2" placeholder="Your address or pickup instructions"
-                  class="w-full px-3 py-2 rounded-lg bg-espresso-panel border border-outline-variant/40 text-on-surface font-body-sm text-body-sm focus:outline-none focus:border-primary resize-none">${patronAddress}</textarea>
+                <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1.5">Service Type</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <label class="flex items-center gap-2 p-2.5 rounded-xl bg-espresso-panel border border-primary/40 cursor-pointer hover:border-primary transition-all">
+                    <input type="radio" name="orderServiceType" value="Dine-In" checked class="accent-primary">
+                    <div class="flex flex-col">
+                      <span class="font-body-md text-xs font-bold text-gold-cream">Dine-In</span>
+                      <span class="text-[10px] text-on-surface-variant">Table Service</span>
+                    </div>
+                  </label>
+                  <label class="flex items-center gap-2 p-2.5 rounded-xl bg-espresso-panel border border-outline-variant/30 cursor-pointer hover:border-primary transition-all">
+                    <input type="radio" name="orderServiceType" value="Takeaway" class="accent-primary">
+                    <div class="flex flex-col">
+                      <span class="font-body-md text-xs font-bold text-gold-cream">Takeaway</span>
+                      <span class="text-[10px] text-on-surface-variant">Self Pickup</span>
+                    </div>
+                  </label>
+                </div>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -90,21 +105,15 @@ export function renderCartDrawer() {
                     class="w-full px-3 py-1.5 rounded-lg bg-espresso-panel border border-outline-variant/40 text-on-surface font-body-sm text-body-sm focus:outline-none focus:border-primary">
                 </div>
                 <div>
-                  <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">WhatsApp Phone</label>
+                  <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Mobile Number</label>
                   <input type="text" id="checkoutPhoneInput" value="${patronPhone}" placeholder="+91 98110..."
                     class="w-full px-3 py-1.5 rounded-lg bg-espresso-panel border border-outline-variant/40 text-on-surface font-body-sm text-body-sm focus:outline-none focus:border-primary">
                 </div>
               </div>
 
               <div>
-                <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Email / Receipt Destination</label>
-                <input type="email" id="checkoutEmailInput" value="${user.id && !user.id.includes('guest') ? user.id : ''}" placeholder="patron@gmail.com (for live tracking)"
-                  class="w-full px-3 py-1.5 rounded-lg bg-espresso-panel border border-outline-variant/40 text-on-surface font-body-sm text-body-sm focus:outline-none focus:border-primary">
-              </div>
-
-              <div>
-                <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Special Gift Note / Instructions</label>
-                <input type="text" id="checkoutNoteInput" placeholder="e.g. Calligraphy note: Happy Birthday!"
+                <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Table Number / Pickup Instructions</label>
+                <input type="text" id="checkoutNoteInput" placeholder="e.g. Table 4 OR Pickup at 7:30 PM"
                   class="w-full px-3 py-1.5 rounded-lg bg-espresso-panel border border-outline-variant/40 text-on-surface font-body-sm text-body-sm focus:outline-none focus:border-primary">
               </div>
 
@@ -117,7 +126,7 @@ export function renderCartDrawer() {
                   </label>
                   <label class="flex items-center gap-2 p-2 rounded-lg bg-espresso-panel border border-outline-variant/30 cursor-pointer">
                     <input type="radio" name="paymentMethod" value="cod" class="accent-primary">
-                    <span class="font-body-sm text-xs text-on-surface">Cash on Pickup</span>
+                    <span class="font-body-sm text-xs text-on-surface">Pay at Counter</span>
                   </label>
                 </div>
               </div>
@@ -213,33 +222,22 @@ export function renderCartDrawer() {
     placeOrderBtn.onclick = () => {
       const customerName = document.getElementById('checkoutNameInput')?.value.trim() || user.name || 'Valued Patron';
       const customerPhone = document.getElementById('checkoutPhoneInput')?.value.trim() || user.phone || '+91 98110 00000';
-      const customerEmail = document.getElementById('checkoutEmailInput')?.value.trim() || (user.id && !user.id.includes('guest') ? user.id : 'patron@ganachly.com');
-      const address = document.getElementById('checkoutAddressInput')?.value.trim();
-      const zone = document.getElementById('checkoutZoneSelect')?.value || 'fbd';
-      const specialNote = document.getElementById('checkoutNoteInput')?.value.trim() || 'Handcrafted fresh for evening bake dispatch.';
+      const customerEmail = user.id && !user.id.includes('guest') ? user.id : 'patron@ganachly.com';
+      const serviceType = document.querySelector('input[name="orderServiceType"]:checked')?.value || 'Dine-In';
+      const specialNote = document.getElementById('checkoutNoteInput')?.value.trim() || `${serviceType} Order`;
       const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'upi';
 
-      if (!address) {
-        showToast('Please enter your address or pickup details', 'error', 'Address Required');
-        const addrEl = document.getElementById('checkoutAddressInput');
-        if (addrEl) {
-          addrEl.focus();
-          addrEl.classList.add('ring-2', 'ring-primary');
-          setTimeout(() => addrEl.classList.remove('ring-2', 'ring-primary'), 2500);
-        }
-        return;
-      }
-
       placeOrderBtn.disabled = true;
-      placeOrderBtn.innerHTML = `<span class="material-symbols-outlined text-[19px] animate-spin">sync</span><span>Securing Oven Hearth Batch...</span>`;
+      placeOrderBtn.innerHTML = `<span class="material-symbols-outlined text-[19px] animate-spin">sync</span><span>Preparing Order...</span>`;
 
       try {
         const order = store.placeOrder({
           customerName,
           customerEmail,
           customerPhone,
-          address,
-          zone: 'Self / WhatsApp',
+          serviceType,
+          zone: serviceType,
+          address: serviceType === 'Dine-In' ? `Dine-In (${specialNote})` : `Takeaway (${specialNote})`,
           specialNote,
           paymentMethod
         });
@@ -247,16 +245,16 @@ export function renderCartDrawer() {
         if (order) {
           close();
           renderOrderConfirmationModal(order);
-          showToast(`Order #${order.id} confirmed! Live batch dispatched to oven.`, 'oven_gen', 'Fresh 70% Couverture');
+          showToast(`Order #${order.id} confirmed! (${serviceType})`, 'restaurant', 'Fresh 70% Couverture');
         } else {
           placeOrderBtn.disabled = false;
-          placeOrderBtn.innerHTML = `<span class="material-symbols-outlined text-[19px]">local_fire_department</span><span>Confirm & Place Nocturne Order</span>`;
+          placeOrderBtn.innerHTML = `<span class="material-symbols-outlined text-[19px]">local_fire_department</span><span>Confirm & Place Order</span>`;
           showToast('Cart is empty. Please add confections to place an order.', 'error');
         }
       } catch (err) {
         console.error('Order placement error:', err);
         placeOrderBtn.disabled = false;
-        placeOrderBtn.innerHTML = `<span class="material-symbols-outlined text-[19px]">local_fire_department</span><span>Confirm & Place Nocturne Order</span>`;
+        placeOrderBtn.innerHTML = `<span class="material-symbols-outlined text-[19px]">local_fire_department</span><span>Confirm & Place Order</span>`;
         showToast('An error occurred while securing your order. Please try again.', 'error');
       }
     };
@@ -301,7 +299,7 @@ function renderOrderConfirmationModal(order) {
             ${order.items.map(i => `<div>${i.qty}x ${i.title} (₹${i.price * i.qty})</div>`).join('')}
           </div>
           <div class="flex justify-between items-center text-xs text-on-surface-variant border-t border-primary/10 pt-2">
-            <span>Destination: ${order.zone}</span>
+            <span>Service: ${order.serviceType || order.zone}</span>
             <span class="font-bold text-primary font-label-price text-sm">Total: ₹${order.total}</span>
           </div>
         </div>
