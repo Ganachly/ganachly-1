@@ -20,6 +20,7 @@ import {
   saveUserCartToFirestore,
   getUserCartFromFirestore,
   clearUserCartInFirestore,
+  saveWhisperToFirestore,
   db,
   collection,
   onSnapshot,
@@ -130,7 +131,7 @@ class GanachlyStore {
           inventory: (parsed.inventory || []).filter(i => !['inv-1', 'inv-2', 'inv-3', 'inv-4', 'inv-5', 'inv-6'].includes(i.id)),
           batches: (parsed.batches || []).filter(b => !legacyMockBatches.has(b.id)),
           deliveryZones: parsed.deliveryZones || initialDeliveryZones,
-          whispers: parsed.whispers || initialWhispers,
+          whispers: (parsed.whispers || []).filter(w => !['w-1', 'w-2', 'w-3'].includes(w.id)),
           users: parsed.users || [],
           settings: parsed.settings || {
             cutoffTime: '17:00 IST',
@@ -153,7 +154,7 @@ class GanachlyStore {
       inventory: initialInventory,
       batches: initialBatches,
       deliveryZones: initialDeliveryZones,
-      whispers: initialWhispers,
+      whispers: [],
       users: [],
       settings: {
         cutoffTime: '17:00 IST',
@@ -845,6 +846,28 @@ class GanachlyStore {
         console.debug('Firestore users listener notice:', err.message);
       });
 
+      // Real-time synchronization for whisper wall reviews
+      onSnapshot(collection(db, 'whispers'), (snapshot) => {
+        if (snapshot && !snapshot.empty) {
+          const firestoreWhispers = [];
+          snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data && data.id) {
+              firestoreWhispers.push(data);
+            }
+          });
+          if (firestoreWhispers.length > 0) {
+            const whisperMap = new Map();
+            (this.state.whispers || []).forEach(w => whisperMap.set(w.id, w));
+            firestoreWhispers.forEach(w => whisperMap.set(w.id, w));
+            this.state.whispers = Array.from(whisperMap.values()).sort((a, b) => (b.syncedAt || b.timestamp || 0) - (a.syncedAt || a.timestamp || 0));
+            this.saveState();
+          }
+        }
+      }, (err) => {
+        console.debug('Firestore whispers listener notice:', err.message);
+      });
+
       // Auth session cache restoration: automatically restore authenticated user session from cache memory
       initAuthSessionListener((restoredUser) => {
         try {
@@ -924,12 +947,12 @@ class GanachlyStore {
 
   // --- WHISPER WALL (REVIEWS) ---
   getWhispers() {
-    return this.state.whispers || initialWhispers;
+    return this.state.whispers || [];
   }
 
   addWhisper({ name, location, rating, comment }) {
     if (!this.state.whispers) {
-      this.state.whispers = [...initialWhispers];
+      this.state.whispers = [];
     }
     const newWhisper = {
       id: 'w-' + Date.now().toString(36) + '-' + Math.floor(100 + Math.random() * 900),
@@ -937,10 +960,12 @@ class GanachlyStore {
       location: location || 'Delhi NCR',
       rating: parseInt(rating, 10) || 5,
       comment: comment || '',
-      date: 'Just now'
+      date: 'Just now',
+      timestamp: Date.now()
     };
     this.state.whispers.unshift(newWhisper);
     this.saveState();
+    saveWhisperToFirestore(newWhisper);
     return newWhisper;
   }
 

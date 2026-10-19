@@ -465,3 +465,22 @@ export async function uploadProductImageToStorage(file) {
   }
 }
 
+/**
+ * Helper to save a review / whisper to Firestore
+ */
+export async function saveWhisperToFirestore(whisperData) {
+  try {
+    const whisperRef = doc(db, 'whispers', whisperData.id);
+    const sanitized = sanitizeForFirestore({
+      ...whisperData,
+      createdAt: serverTimestamp(),
+      syncedAt: Date.now()
+    });
+    await setDoc(whisperRef, sanitized, { merge: true });
+    console.info(`[Firebase] Whisper #${whisperData.id} saved to Firestore.`);
+    return { success: true, id: whisperData.id };
+  } catch (error) {
+    console.warn('[Firebase] Firestore whisper save error:', error.message);
+    return { success: false, error: error.message };
+  }
+}

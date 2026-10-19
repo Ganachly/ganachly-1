@@ -113,6 +113,11 @@ export function attachHomePageEvents() {
   // --- WHISPER WALL LOGIC ---
   renderWhisperWall();
   attachWhisperWallEvents();
+
+  // Listen to store updates for live real-time whisper reviews from Firebase
+  store.subscribe(() => {
+    renderWhisperWall();
+  });
 }
 
 function renderWhisperWall() {

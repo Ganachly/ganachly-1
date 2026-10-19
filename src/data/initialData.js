@@ -40,29 +40,4 @@ export const initialDeliveryZones = [
   { id: 'takeaway', name: 'Takeaway', fee: 0, tag: 'Self Pickup', time: '10–15 mins' }
 ];
 
-export const initialWhispers = [
-  {
-    id: 'w-1',
-    name: 'Aanya Sharma',
-    location: 'Faridabad',
-    rating: 5,
-    comment: 'The 70.5% Belgian couverture brownie melted in my mouth. Truly 100% eggless perfection!',
-    date: 'Just now'
-  },
-  {
-    id: 'w-2',
-    name: 'Kabir Verma',
-    location: 'Gurugram',
-    rating: 5,
-    comment: 'Ordered for our evening gathering. The brookies were warm, fudgy, and delightfully decadent.',
-    date: 'Yesterday'
-  },
-  {
-    id: 'w-3',
-    name: 'Rhea Sengupta',
-    location: 'South Delhi',
-    rating: 5,
-    comment: 'The lotus biscoff brownie is out of this world! You can taste the rich, authentic Callebaut chocolate in every bite.',
-    date: '2 days ago'
-  }
-];
+export const initialWhispers = [];
