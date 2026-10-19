@@ -195,7 +195,7 @@ export async function saveInventoryToFirestore(inventoryData) {
  */
 export async function saveSettingsToFirestore(settingsData) {
   try {
-    const settingsRef = doc(db, 'settings', 'atelier_config');
+    const settingsRef = doc(db, 'settings', 'kitchen_config');
     const sanitized = sanitizeForFirestore({
       ...settingsData,
       updatedAt: serverTimestamp()
@@ -315,12 +315,12 @@ export async function firebaseRegisterOrLogin({ email, password, name, phone, zo
   const userProfile = {
     id: normalizedEmail,
     uid: firebaseUser ? firebaseUser.uid : `usr-${Date.now()}`,
-    code: code || (isHardik ? 'ADMIN-ATELIER-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`),
+    code: code || (isHardik ? 'ADMIN-GANACHLY-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`),
     email: normalizedEmail,
     name: name || (isHardik ? 'Hardik' : normalizedEmail.split('@')[0]),
     role: effectiveRole,
     phone: phone || (isHardik ? '+91 98110 00192' : '+91 98110 00000'),
-    zone: zone || (isHardik ? 'Faridabad Atelier Central' : 'Faridabad'),
+    zone: zone || (isHardik ? 'Faridabad Central Kitchen' : 'Faridabad'),
     avatar: isHardik ? '👨‍🍳' : '🍫',
     title: isHardik ? 'Master Patissier & Founder' : 'Delhi NCR Connoisseur',
     authProvider: firebaseUser ? 'firebase_email_password' : 'custom_patron',
@@ -384,7 +384,7 @@ export function initAuthSessionListener(onUserRestored) {
         role: isHardik ? 'admin' : 'customer',
         avatar: isHardik ? '👨‍🍳' : '🍫',
         title: isHardik ? 'Master Patissier & Founder' : 'Delhi NCR Connoisseur',
-        zone: isHardik ? 'Faridabad Atelier Central' : 'Faridabad'
+        zone: isHardik ? 'Faridabad Central Kitchen' : 'Faridabad'
       });
     }
   });

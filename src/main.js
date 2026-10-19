@@ -48,9 +48,9 @@ function renderRoute() {
   if (cleanHash.startsWith('#/admin')) {
     dismissGoogleOneTap();
 
-    // If unauthenticated / not admin, render dedicated Atelier Admin Login directly on /admin
+    // If unauthenticated / not admin, render dedicated Admin Login directly on /admin
     if (!auth.isAdmin()) {
-      document.title = 'Atelier Admin Login • Ganachly Operations';
+      document.title = 'Admin Login • Ganachly Operations';
       app.innerHTML = renderAdminLoginPage(cleanHash);
       attachAdminLoginPageEvents(cleanHash);
       return;
@@ -64,7 +64,7 @@ function renderRoute() {
 
     let adminPageContent = '';
     let attachEventsFn = null;
-    let pageTitle = 'Atelier Dashboard';
+    let pageTitle = 'Admin Dashboard';
 
     if (cleanHash === '#/admin/orders') {
       pageTitle = 'Orders & Concierge';
@@ -97,7 +97,7 @@ function renderRoute() {
       attachEventsFn = attachAdminBatchesPageEvents;
     }
 
-    document.title = `Ganachly Atelier • ${pageTitle}`;
+    document.title = `Ganachly Admin • ${pageTitle}`;
 
     app.innerHTML = `
       <div class="min-h-screen bg-espresso-deep text-on-surface flex w-full">
@@ -124,7 +124,7 @@ function renderRoute() {
   let pageTitle = 'Luxury Artisan Eggless Patisserie';
 
   if (cleanHash === '#/menu') {
-    pageTitle = 'Atelier Menu & Formulations';
+    pageTitle = 'Menu & Formulations';
     storefrontPageContent = renderMenuPage();
     attachStorefrontEventsFn = attachMenuPageEvents;
   } else if (cleanHash === '#/story' || cleanHash === '#/our-story') {
