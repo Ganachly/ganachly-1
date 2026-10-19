@@ -109,4 +109,111 @@ export function attachHomePageEvents() {
       });
     }
   }
+
+  // --- WHISPER WALL LOGIC ---
+  renderWhisperWall();
+  attachWhisperWallEvents();
+}
+
+function renderWhisperWall() {
+  const whisperGrid = document.getElementById('whisper-wall-grid');
+  if (!whisperGrid) return;
+
+  const whispers = store.getWhispers();
+  if (!whispers || whispers.length === 0) {
+    whisperGrid.innerHTML = `
+      <div class="col-span-full py-8 text-center font-editorial-quote text-sm text-on-surface-variant italic">
+        Be the first patron to leave a whisper for our patisserie team!
+      </div>
+    `;
+    return;
+  }
+
+  whisperGrid.innerHTML = whispers.slice(0, 6).map(w => {
+    const stars = Array.from({ length: 5 }, (_, i) =>
+      `<span class="material-symbols-outlined text-[16px] ${i < (w.rating || 5) ? 'text-primary' : 'text-on-surface-variant/30'}">star</span>`
+    ).join('');
+
+    return `
+      <div class="p-space-lg rounded-2xl bg-card-surface/80 shadow-md flex flex-col justify-between border border-primary/15 hover:border-primary/40 transition-all">
+        <div class="space-y-space-md">
+          <div class="flex items-center justify-between">
+            <div class="flex text-primary gap-0.5">${stars}</div>
+            <span class="text-[10px] text-on-surface-variant/80 uppercase font-mono">${w.date || 'Recently'}</span>
+          </div>
+          <p class="font-editorial-quote text-sm leading-relaxed text-on-surface italic">
+            “${w.comment}”
+          </p>
+        </div>
+        <div class="pt-space-md mt-space-md flex items-center justify-between border-t border-primary/10">
+          <div>
+            <h5 class="font-body-md text-sm font-bold text-gold-cream">${w.name}</h5>
+            <span class="font-body-sm text-[11px] text-on-surface-variant">${w.location || 'Delhi NCR'}</span>
+          </div>
+          <span class="text-[10px] text-primary font-editorial-eyebrow uppercase border border-primary/20 px-2 py-0.5 rounded-full">Patron Review</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function attachWhisperWallEvents() {
+  let selectedRating = 5;
+  const ratingContainer = document.getElementById('whisper-rating-selector');
+  const ratingLabel = document.getElementById('rating-label');
+
+  if (ratingContainer) {
+    const stars = ratingContainer.querySelectorAll('.star-icon');
+    stars.forEach(star => {
+      star.onclick = () => {
+        selectedRating = parseInt(star.getAttribute('data-rating'), 10) || 5;
+        stars.forEach((s, idx) => {
+          if (idx < selectedRating) {
+            s.classList.add('text-primary');
+            s.classList.remove('text-on-surface-variant/30');
+          } else {
+            s.classList.remove('text-primary');
+            s.classList.add('text-on-surface-variant/30');
+          }
+        });
+        if (ratingLabel) {
+          ratingLabel.textContent = `${selectedRating} Star${selectedRating > 1 ? 's' : ''}`;
+        }
+      };
+    });
+  }
+
+  const whisperForm = document.getElementById('whisper-wall-form');
+  if (whisperForm) {
+    whisperForm.onsubmit = (e) => {
+      e.preventDefault();
+      const nameInput = document.getElementById('whisper-name');
+      const locationInput = document.getElementById('whisper-location');
+      const commentInput = document.getElementById('whisper-comment');
+
+      const name = (nameInput?.value || '').trim();
+      const location = (locationInput?.value || '').trim();
+      const comment = (commentInput?.value || '').trim();
+
+      if (!name || !comment) {
+        showToast('Please provide your name and review', 'warning');
+        return;
+      }
+
+      store.addWhisper({
+        name,
+        location: location || 'Delhi NCR',
+        rating: selectedRating,
+        comment
+      });
+
+      showToast('Whisper posted successfully!', 'rate_review', 'Thank you for sharing your experience!');
+
+      if (nameInput) nameInput.value = '';
+      if (locationInput) locationInput.value = '';
+      if (commentInput) commentInput.value = '';
+
+      renderWhisperWall();
+    };
+  }
 }
