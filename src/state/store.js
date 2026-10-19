@@ -5,6 +5,7 @@ import {
   initialInventory,
   initialBatches,
   initialDeliveryZones,
+  initialWhispers,
   defaultGuestUser
 } from '../data/initialData.js';
 import {
@@ -129,6 +130,7 @@ class GanachlyStore {
           inventory: (parsed.inventory || []).filter(i => !['inv-1', 'inv-2', 'inv-3', 'inv-4', 'inv-5', 'inv-6'].includes(i.id)),
           batches: (parsed.batches || []).filter(b => !legacyMockBatches.has(b.id)),
           deliveryZones: parsed.deliveryZones || initialDeliveryZones,
+          whispers: parsed.whispers || initialWhispers,
           users: parsed.users || [],
           settings: parsed.settings || {
             cutoffTime: '17:00 IST',
@@ -151,6 +153,7 @@ class GanachlyStore {
       inventory: initialInventory,
       batches: initialBatches,
       deliveryZones: initialDeliveryZones,
+      whispers: initialWhispers,
       users: [],
       settings: {
         cutoffTime: '17:00 IST',
@@ -917,6 +920,28 @@ class GanachlyStore {
       console.debug('[Firebase] Orders refresh notice:', e.message);
     }
     return this.state.orders;
+  }
+
+  // --- WHISPER WALL (REVIEWS) ---
+  getWhispers() {
+    return this.state.whispers || initialWhispers;
+  }
+
+  addWhisper({ name, location, rating, comment }) {
+    if (!this.state.whispers) {
+      this.state.whispers = [...initialWhispers];
+    }
+    const newWhisper = {
+      id: 'w-' + Date.now().toString(36) + '-' + Math.floor(100 + Math.random() * 900),
+      name: name || 'Anonymous Connoisseur',
+      location: location || 'Delhi NCR',
+      rating: parseInt(rating, 10) || 5,
+      comment: comment || '',
+      date: 'Just now'
+    };
+    this.state.whispers.unshift(newWhisper);
+    this.saveState();
+    return newWhisper;
   }
 
   // --- KPI Telemetry ---

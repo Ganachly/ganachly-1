@@ -259,4 +259,62 @@
 </div>
 </div>
 </section>
+
+<!-- WHISPER WALL (PATRON REVIEWS & FEEDBACK) -->
+<section id="whisper-wall-section" class="w-full py-space-3xl bg-surface-container-lowest border-t border-primary/10">
+<div class="max-w-[1200px] mx-auto px-margin md:px-margin-desktop">
+  <div class="text-center max-w-xl mx-auto mb-space-2xl space-y-space-xs">
+    <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-[0.25em]">Voices of our Connoisseurs</span>
+    <h2 class="font-headline-lg text-4xl sm:text-5xl text-on-surface tracking-wider">WHISPER WALL</h2>
+    <p class="font-editorial-quote text-sm text-on-surface-variant italic">Share your experience &amp; leave a whisper for our patisserie team</p>
+    <div class="w-12 h-0.5 bg-primary mx-auto mt-2"></div>
+  </div>
+
+  <!-- Dynamic Whispers Container -->
+  <div id="whisper-wall-grid" class="grid grid-cols-1 md:grid-cols-3 gap-space-lg mb-space-2xl">
+  </div>
+
+  <!-- Leave a Whisper Form Card -->
+  <div class="max-w-2xl mx-auto rounded-3xl bg-card-surface/90 border border-primary/20 p-space-xl shadow-xl">
+    <h3 class="font-headline-md text-xl text-gold-cream uppercase tracking-wider mb-2 text-center">Leave Your Whisper</h3>
+    <p class="font-editorial-quote text-xs text-on-surface-variant italic text-center mb-6">How was your Ganachly chocolate experience?</p>
+
+    <form id="whisper-wall-form" class="space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block font-label-action text-xs text-gold-cream uppercase tracking-wider mb-1">Your Name</label>
+          <input type="text" id="whisper-name" required placeholder="e.g. Priyanshi Mehta" class="w-full px-4 py-2.5 rounded-xl bg-espresso-panel border border-primary/20 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"/>
+        </div>
+        <div>
+          <label class="block font-label-action text-xs text-gold-cream uppercase tracking-wider mb-1">Location / Zone</label>
+          <input type="text" id="whisper-location" placeholder="e.g. Faridabad / Delhi NCR" class="w-full px-4 py-2.5 rounded-xl bg-espresso-panel border border-primary/20 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"/>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-label-action text-xs text-gold-cream uppercase tracking-wider mb-1">Rating</label>
+        <div id="whisper-rating-selector" class="flex items-center gap-2 cursor-pointer text-primary">
+          <span class="material-symbols-outlined text-[24px] star-icon cursor-pointer select-none" data-rating="1">star</span>
+          <span class="material-symbols-outlined text-[24px] star-icon cursor-pointer select-none" data-rating="2">star</span>
+          <span class="material-symbols-outlined text-[24px] star-icon cursor-pointer select-none" data-rating="3">star</span>
+          <span class="material-symbols-outlined text-[24px] star-icon cursor-pointer select-none" data-rating="4">star</span>
+          <span class="material-symbols-outlined text-[24px] star-icon cursor-pointer select-none" data-rating="5">star</span>
+          <span id="rating-label" class="text-xs text-on-surface-variant ml-2 uppercase font-bold">5 Stars</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-label-action text-xs text-gold-cream uppercase tracking-wider mb-1">Your Whisper / Review</label>
+        <textarea id="whisper-comment" required rows="3" placeholder="Tell us about the texture, aroma, and taste..." class="w-full px-4 py-2.5 rounded-xl bg-espresso-panel border border-primary/20 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"></textarea>
+      </div>
+
+      <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-gold-hover to-primary text-espresso-deep font-label-action text-xs tracking-[0.2em] font-bold uppercase hover:brightness-110 transition-all shadow-lg flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">rate_review</span>
+        <span>POST WHISPER</span>
+      </button>
+    </form>
+  </div>
+</div>
+</section>
+
 </div></main>
