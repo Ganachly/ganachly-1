@@ -151,7 +151,7 @@ export function renderMenuPage() {
   const filtered = getFilteredProducts();
 
   return `
-    <main class="w-full pt-16 sm:pt-24 bg-surface min-h-screen pb-16">
+    <main class="w-full pt-28 sm:pt-36 bg-surface min-h-screen pb-16">
       <div class="flex flex-col w-full max-w-[1240px] mx-auto px-4 sm:px-6">
         
         <!-- Clean Header -->
