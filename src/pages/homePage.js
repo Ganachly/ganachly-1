@@ -68,12 +68,12 @@ export function attachHomePageEvents() {
         <div class="group relative flex flex-col rounded-2xl bg-gradient-to-b from-card-surface to-surface-container-lowest overflow-hidden shadow-xl hover:-translate-y-1.5 transition-all duration-300 border border-primary/15 hover:border-primary/40">
           <div class="relative h-56 w-full overflow-hidden bg-espresso-panel cursor-pointer" onclick="window.openProductDetailModal('${product.id}')">
             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                 src="${product.image || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80'}" 
+                 src="${(typeof window !== 'undefined' && window.normalizeImageUrl) ? window.normalizeImageUrl(product.image, product.category) : (product.image || '')}" 
                  alt="${product.title}" 
                  loading="lazy" 
                  decoding="async"
                  referrerpolicy="no-referrer"
-                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';"/>
+                 onerror="window.handleProductImageError ? window.handleProductImageError(this, '${encodeURIComponent(product.image || '')}', '${(product.category || '').replace(/'/g, "\\'")}') : (this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80');"/>
             <div class="absolute inset-0 bg-gradient-to-t from-card-surface via-transparent to-black/30"></div>
             ${product.badge ? `
               <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-primary/20 backdrop-blur-md text-primary font-label-badge text-label-badge tracking-[0.2em] uppercase font-bold border border-primary/30">

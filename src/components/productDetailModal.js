@@ -21,13 +21,13 @@ export function openProductDetailModal(productId) {
         </button>
 
         <div class="h-44 sm:h-60 w-full relative bg-espresso-deep">
-          <img src="${product.image || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80'}" 
+          <img src="${(typeof window !== 'undefined' && window.normalizeImageUrl) ? window.normalizeImageUrl(product.image, product.category) : (product.image || '')}" 
                alt="${product.title}" 
                class="w-full h-full object-cover"
                loading="lazy"
                decoding="async"
                referrerpolicy="no-referrer"
-               onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';">
+               onerror="window.handleProductImageError ? window.handleProductImageError(this, '${encodeURIComponent(product.image || '')}', '${(product.category || '').replace(/'/g, "\\'")}') : (this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80');">
           <div class="absolute inset-0 bg-gradient-to-t from-espresso-panel via-transparent to-transparent"></div>
           ${product.badge ? `
             <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-primary/20 text-primary font-label-badge text-xs uppercase tracking-wider backdrop-blur-md border border-primary/30 font-bold">

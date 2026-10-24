@@ -42,3 +42,5 @@ export const initialDeliveryZones = [
 
 export const initialWhispers = [];
 
+export const initialGiftingRequests = [];
+

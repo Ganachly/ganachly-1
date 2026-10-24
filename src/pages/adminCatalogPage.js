@@ -44,7 +44,7 @@ export function renderAdminCatalogPage() {
         ` : products.map(p => `
           <div class="product-admin-card rounded-xl bg-espresso-panel border border-outline-variant/20 overflow-hidden flex flex-col justify-between group hover:border-primary/40 transition-all" data-id="${p.id}">
             <div class="relative h-44 w-full bg-surface-container overflow-hidden">
-              <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80'">
+              <img src="${normalizeImageUrl(p.image, p.category)}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" onerror="window.handleProductImageError ? window.handleProductImageError(this, '${encodeURIComponent(p.image || '')}', '${(p.category || '').replace(/'/g, "\\'")}') : (this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80')">
               <div class="absolute inset-0 bg-gradient-to-t from-espresso-panel via-transparent to-black/30"></div>
               <div class="absolute top-3 left-3 flex flex-wrap gap-1">
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-label-badge uppercase tracking-wider bg-black/60 backdrop-blur-md text-gold-light border border-primary/20">

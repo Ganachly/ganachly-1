@@ -1,6 +1,7 @@
 import { store } from '../state/store.js';
 import { showToast } from '../components/toast.js';
 import { openProductDetailModal } from '../components/productDetailModal.js';
+import { normalizeImageUrl } from '../utils/imageUtils.js';
 
 let activeCategory = 'all';
 let searchQuery = '';
@@ -66,6 +67,9 @@ function renderProductGridItems(filtered) {
         const isExclusive = product.stockStatus === 'nocturne_exclusive';
         const cartItem = cart.find(c => c.productId === product.id);
         const cartQty = cartItem ? cartItem.qty : 0;
+        const resolvedImg = normalizeImageUrl(product.image, product.category);
+        const encodedRawImg = encodeURIComponent(product.image || '');
+        const escapedCat = (product.category || '').replace(/'/g, "\\'");
 
         return `
           <article class="product-item flex flex-col justify-between rounded-2xl overflow-hidden bg-card-surface/70 border border-primary/15 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.5)] group">
@@ -73,12 +77,12 @@ function renderProductGridItems(filtered) {
             <!-- Thumbnail & Badges -->
             <div class="relative h-44 w-full overflow-hidden bg-espresso-panel cursor-pointer" onclick="window.openProductDetailModal('${product.id}')">
               <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                   src="${product.image || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80'}" 
+                   src="${resolvedImg}" 
                    alt="${product.title}" 
                    loading="lazy" 
                    decoding="async"
                    referrerpolicy="no-referrer"
-                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';">
+                   onerror="window.handleProductImageError(this, '${encodedRawImg}', '${escapedCat}');">
               <div class="absolute inset-0 bg-gradient-to-t from-card-surface/80 via-transparent to-transparent"></div>
               
               ${product.badge ? `

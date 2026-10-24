@@ -141,6 +141,60 @@ export async function saveOrderToFirestore(orderData) {
 }
 
 /**
+ * Helper to save gifting / bulk inquiry to Firestore
+ */
+export async function saveGiftingRequestToFirestore(requestData) {
+  try {
+    const giftRef = doc(db, 'gifting_requests', requestData.id);
+    const sanitized = sanitizeForFirestore({
+      ...requestData,
+      updatedAt: serverTimestamp(),
+      syncedAt: Date.now()
+    });
+    await setDoc(giftRef, sanitized, { merge: true });
+    console.info(`[Firebase] Gifting request #${requestData.id} synced to Firestore.`);
+    return { success: true, id: requestData.id };
+  } catch (error) {
+    console.warn('[Firebase] Firestore gifting request save error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Helper to delete gifting request from Firestore
+ */
+export async function deleteGiftingRequestFromFirestore(requestId) {
+  try {
+    const giftRef = doc(db, 'gifting_requests', requestId);
+    await deleteDoc(giftRef);
+    console.info(`[Firebase] Gifting request #${requestId} deleted from Firestore.`);
+    return { success: true, id: requestId };
+  } catch (error) {
+    console.warn('[Firebase] Firestore gifting request delete error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Helper to retrieve all gifting requests from Firestore
+ */
+export async function getGiftingRequestsFromFirestore() {
+  try {
+    const giftColl = collection(db, 'gifting_requests');
+    const snapshot = await getDocs(giftColl);
+    const requests = [];
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data && data.id) requests.push(data);
+    });
+    return requests;
+  } catch (error) {
+    console.warn('[Firebase] Firestore gifting requests retrieval error:', error);
+    return [];
+  }
+}
+
+/**
  * Helper to save batch to Firestore
  */
 export async function saveBatchToFirestore(batchData) {

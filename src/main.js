@@ -22,6 +22,7 @@ import { renderAdminOrdersPage, attachAdminOrdersPageEvents } from './pages/admi
 import { renderAdminInventoryPage, attachAdminInventoryPageEvents } from './pages/adminInventoryPage.js';
 import { renderAdminCatalogPage, attachAdminCatalogPageEvents } from './pages/adminCatalogPage.js';
 import { renderAdminPatronsPage, attachAdminPatronsPageEvents } from './pages/adminPatronsPage.js';
+import { renderAdminGiftingPage, attachAdminGiftingPageEvents } from './pages/adminGiftingPage.js';
 import { renderAdminLoginPage, attachAdminLoginPageEvents } from './pages/adminLoginPage.js';
 import { renderLoginPage, attachLoginPageEvents } from './pages/loginPage.js';
 
@@ -70,6 +71,10 @@ function renderRoute() {
       pageTitle = 'Orders & Dispatch';
       adminPageContent = renderAdminOrdersPage();
       attachEventsFn = attachAdminOrdersPageEvents;
+    } else if (cleanHash === '#/admin/gifting' || cleanHash === '#/admin/gifting-requests') {
+      pageTitle = 'Corporate & Event Gifting Requests';
+      adminPageContent = renderAdminGiftingPage();
+      attachEventsFn = attachAdminGiftingPageEvents;
     } else if (cleanHash === '#/admin/patrons' || cleanHash === '#/admin/users') {
       pageTitle = 'Customers & Accounts Directory';
       adminPageContent = renderAdminPatronsPage();

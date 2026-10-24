@@ -6,7 +6,8 @@ import {
   initialBatches,
   initialDeliveryZones,
   initialWhispers,
-  defaultGuestUser
+  defaultGuestUser,
+  initialGiftingRequests
 } from '../data/initialData.js';
 import {
   saveOrderToFirestore,
@@ -20,6 +21,9 @@ import {
   saveUserCartToFirestore,
   getUserCartFromFirestore,
   clearUserCartInFirestore,
+  saveGiftingRequestToFirestore,
+  deleteGiftingRequestFromFirestore,
+  getGiftingRequestsFromFirestore,
   db,
   collection,
   onSnapshot,
@@ -132,6 +136,7 @@ class GanachlyStore {
           deliveryZones: parsed.deliveryZones || initialDeliveryZones,
           whispers: (parsed.whispers || []).filter(w => !['w-1', 'w-2', 'w-3'].includes(w.id)),
           users: parsed.users || [],
+          giftingRequests: parsed.giftingRequests || initialGiftingRequests || [],
           settings: parsed.settings || {
             cutoffTime: '17:00 IST',
             eveningBakeActive: true,
@@ -155,6 +160,7 @@ class GanachlyStore {
       deliveryZones: initialDeliveryZones,
       whispers: initialWhispers,
       users: [],
+      giftingRequests: initialGiftingRequests || [],
       settings: {
         cutoffTime: '17:00 IST',
         eveningBakeActive: true,
@@ -726,6 +732,62 @@ class GanachlyStore {
     deleteBatchFromFirestore(batchId);
   }
 
+  // --- GIFTING / BULK INQUIRIES ---
+  getGiftingRequests() {
+    return Array.isArray(this.state.giftingRequests) ? this.state.giftingRequests : [];
+  }
+
+  getGiftingRequestById(id) {
+    return this.getGiftingRequests().find(r => r.id === id);
+  }
+
+  async addGiftingRequest(requestData) {
+    if (!requestData.id) {
+      requestData.id = `GIFT-${Date.now()}`;
+    }
+    if (!this.state.giftingRequests) {
+      this.state.giftingRequests = [];
+    }
+    this.state.giftingRequests = this.state.giftingRequests.filter(r => r.id !== requestData.id);
+    this.state.giftingRequests.unshift(requestData);
+    this.saveState();
+
+    try {
+      await saveGiftingRequestToFirestore(requestData);
+    } catch (e) {
+      console.warn('Error syncing gifting request to Firestore:', e);
+    }
+    return requestData;
+  }
+
+  async updateGiftingRequestStatus(requestId, status) {
+    if (!this.state.giftingRequests) return;
+    const req = this.state.giftingRequests.find(r => r.id === requestId);
+    if (req) {
+      req.status = status;
+      req.updatedAt = Date.now();
+      this.saveState();
+
+      try {
+        await saveGiftingRequestToFirestore(req);
+      } catch (e) {
+        console.warn('Error syncing status update to Firestore:', e);
+      }
+    }
+  }
+
+  async deleteGiftingRequest(requestId) {
+    if (!this.state.giftingRequests) return;
+    this.state.giftingRequests = this.state.giftingRequests.filter(r => r.id !== requestId);
+    this.saveState();
+
+    try {
+      await deleteGiftingRequestFromFirestore(requestId);
+    } catch (e) {
+      console.warn('Error deleting gifting request from Firestore:', e);
+    }
+  }
+
   // --- Real-time Firebase Cloud Firestore Sync ---
   initFirebaseSync() {
     if (typeof window === 'undefined' || !db || !collection || !onSnapshot) return;
@@ -799,6 +861,31 @@ class GanachlyStore {
       });
 
       // Real-time synchronization for products catalog
+      if (getDocs) {
+        getDocs(collection(db, 'products')).then(snapshot => {
+          if (snapshot && !snapshot.empty) {
+            const firestoreProducts = [];
+            snapshot.forEach(docSnap => {
+              const data = docSnap.data();
+              if (data && data.id) {
+                if (data.image) data.image = normalizeImageUrl(data.image, data.category);
+                firestoreProducts.push(data);
+              }
+            });
+
+            if (firestoreProducts.length > 0) {
+              const prodMap = new Map();
+              this.state.products.forEach(p => prodMap.set(p.id, p));
+              firestoreProducts.forEach(p => prodMap.set(p.id, p));
+              this.state.products = Array.from(prodMap.values());
+              this.saveStateSilent();
+            }
+          }
+        }).catch(err => {
+          console.debug('[Firebase] Products initial load notice:', err.message);
+        });
+      }
+
       onSnapshot(collection(db, 'products'), (snapshot) => {
         if (snapshot && !snapshot.empty) {
           const firestoreProducts = [];
@@ -815,7 +902,7 @@ class GanachlyStore {
             this.state.products.forEach(p => prodMap.set(p.id, p));
             // Overlay Firestore products
             firestoreProducts.forEach(p => {
-              if (p) p.image = normalizeImageUrl(p.image);
+              if (p) p.image = normalizeImageUrl(p.image, p.category);
               prodMap.set(p.id, p);
             });
 
@@ -846,6 +933,47 @@ class GanachlyStore {
         }
       }, (err) => {
         console.debug('Firestore users listener notice:', err.message);
+      });
+
+      // Real-time synchronization for gifting / bulk inquiries
+      if (getDocs) {
+        getDocs(collection(db, 'gifting_requests')).then(snapshot => {
+          if (snapshot && !snapshot.empty) {
+            const firestoreGifting = [];
+            snapshot.forEach(docSnap => {
+              const data = docSnap.data();
+              if (data && data.id) firestoreGifting.push(data);
+            });
+            if (firestoreGifting.length > 0) {
+              const giftMap = new Map();
+              (this.state.giftingRequests || []).forEach(r => giftMap.set(r.id, r));
+              firestoreGifting.forEach(r => giftMap.set(r.id, r));
+              this.state.giftingRequests = Array.from(giftMap.values()).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+              this.saveStateSilent();
+            }
+          }
+        }).catch(err => {
+          console.debug('[Firebase] Gifting requests initial load notice:', err.message);
+        });
+      }
+
+      onSnapshot(collection(db, 'gifting_requests'), (snapshot) => {
+        if (snapshot && !snapshot.empty) {
+          const firestoreGifting = [];
+          snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data && data.id) firestoreGifting.push(data);
+          });
+          if (firestoreGifting.length > 0) {
+            const giftMap = new Map();
+            (this.state.giftingRequests || []).forEach(r => giftMap.set(r.id, r));
+            firestoreGifting.forEach(r => giftMap.set(r.id, r));
+            this.state.giftingRequests = Array.from(giftMap.values()).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            this.saveStateSilent();
+          }
+        }
+      }, (err) => {
+        console.debug('Firestore gifting requests listener notice:', err.message);
       });
 
       // Auth session cache restoration: automatically restore authenticated user session from cache memory

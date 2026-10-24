@@ -6,6 +6,7 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
 
   const isBatches = activeRoute === '#/admin' || activeRoute === '#/admin/batches';
   const isOrders = activeRoute === '#/admin/orders';
+  const isGifting = activeRoute === '#/admin/gifting' || activeRoute === '#/admin/gifting-requests';
   const isPatrons = activeRoute === '#/admin/patrons' || activeRoute === '#/admin/users';
   const isCatalog = activeRoute === '#/admin/catalog' || activeRoute === '#/admin/menu-and-catalog-manager';
   const isInventory = activeRoute === '#/admin/inventory' || activeRoute === '#/admin/inventory-and-couverture-stocks';
@@ -54,6 +55,16 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
               </div>
               <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold ${isOrders ? 'bg-espresso-deep text-gold-cream' : 'bg-primary/20 text-primary'}">
                 ${kpis.hearthQueueCount}
+              </span>
+            </a>
+
+            <a href="#/admin/gifting" class="flex items-center justify-between px-space-md py-2.5 rounded-xl transition-all ${isGifting ? activeClass : inactiveClass}">
+              <div class="flex items-center gap-space-sm">
+                <span class="material-symbols-outlined text-[19px]">featured_seasonal_and_gifts</span>
+                <span class="font-body-md text-body-md tracking-wide">Gifting Requests</span>
+              </div>
+              <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold ${isGifting ? 'bg-espresso-deep text-gold-cream' : 'bg-primary/20 text-primary'}">
+                ${store.getGiftingRequests().length}
               </span>
             </a>
 
