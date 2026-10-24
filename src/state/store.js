@@ -814,7 +814,10 @@ class GanachlyStore {
             // Start with current products
             this.state.products.forEach(p => prodMap.set(p.id, p));
             // Overlay Firestore products
-            firestoreProducts.forEach(p => prodMap.set(p.id, p));
+            firestoreProducts.forEach(p => {
+              if (p) p.image = normalizeImageUrl(p.image);
+              prodMap.set(p.id, p);
+            });
 
             this.state.products = Array.from(prodMap.values());
             this.saveStateSilent();

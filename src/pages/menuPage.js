@@ -72,7 +72,13 @@ function renderProductGridItems(filtered) {
             
             <!-- Thumbnail & Badges -->
             <div class="relative h-44 w-full overflow-hidden bg-espresso-panel cursor-pointer" onclick="window.openProductDetailModal('${product.id}')">
-              <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="${product.image}" alt="${product.title}" loading="lazy" decoding="async">
+              <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                   src="${product.image || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80'}" 
+                   alt="${product.title}" 
+                   loading="lazy" 
+                   decoding="async"
+                   referrerpolicy="no-referrer"
+                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';">
               <div class="absolute inset-0 bg-gradient-to-t from-card-surface/80 via-transparent to-transparent"></div>
               
               ${product.badge ? `

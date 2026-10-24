@@ -51,7 +51,12 @@ export function renderCartDrawer() {
             <div class="space-y-3">
               ${cart.map(item => `
                 <div class="p-3 rounded-xl bg-card-surface border border-outline-variant/25 flex items-center gap-3 shadow-md">
-                  <img src="${item.image}" alt="${item.title}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0 bg-espresso-deep border border-primary/20">
+                  <img src="${item.image || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80'}" 
+                       alt="${item.title}" 
+                       class="w-16 h-16 rounded-lg object-cover flex-shrink-0 bg-espresso-deep border border-primary/20"
+                       loading="lazy"
+                       referrerpolicy="no-referrer"
+                       onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80';">
                   <div class="flex-1 min-w-0">
                     <h4 class="font-body-md text-body-md font-semibold text-on-surface truncate leading-tight">${item.title}</h4>
                     <span class="font-body-sm text-[11px] text-on-surface-variant">${item.weight} • 70% Couverture</span>
