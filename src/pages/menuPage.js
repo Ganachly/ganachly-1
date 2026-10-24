@@ -113,17 +113,17 @@ function renderProductGridItems(filtered) {
                 </p>
               </div>
 
-              <!-- Price & Quick Order -->
+              <!-- Price & Availability -->
               <div class="pt-2 flex items-center justify-between border-t border-primary/10">
                 <span class="font-label-price text-sm text-gold-cream font-bold">₹${product.price}</span>
                 
                 ${isSoldOut ? `
                   <span class="text-[10px] text-on-surface-variant/50 uppercase tracking-wider font-semibold">Unavailable</span>
                 ` : `
-                  <a href="https://wa.me/919810757880?text=Hello%20Ganachly,%20I%20would%20like%20to%20order%20${encodeURIComponent(product.title)}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-whatsapp-green hover:brightness-110 text-white font-label-action text-xs tracking-wider uppercase font-bold transition-all shadow-sm flex items-center gap-1 active:scale-95" title="Order via WhatsApp">
-                    <span class="material-symbols-outlined text-[15px]">chat</span>
-                    <span>Order</span>
-                  </a>
+                  <span class="text-[10px] text-whatsapp-green uppercase tracking-wider font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-whatsapp-green"></span>
+                    <span>Fresh Bake</span>
+                  </span>
                 `}
               </div>
 
