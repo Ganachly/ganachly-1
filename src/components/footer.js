@@ -34,7 +34,6 @@ export function renderStorefrontFooter() {
               <li class="hover:text-gold-cream transition-colors"><a href="#/story">Founder Hardik's Story</a></li>
               <li class="hover:text-gold-cream transition-colors"><a href="#/gifting">Bespoke Corporate Hampers</a></li>
               <li class="hover:text-gold-cream transition-colors"><a href="#/gifting">Broken Bar Sleeve Boxes</a></li>
-              <li class="hover:text-gold-cream transition-colors"><a href="#/my-orders">Track Live Orders</a></li>
               <li class="hover:text-gold-cream transition-colors"><a href="#/admin">Admin Backoffice</a></li>
             </ul>
           </div>

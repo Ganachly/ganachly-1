@@ -445,59 +445,6 @@ export function initAuthSessionListener(onUserRestored) {
   });
 }
 
-/**
- * Cache user cart in Firestore cloud memory
- */
-export async function saveUserCartToFirestore(userId, cartItems) {
-  if (!userId || userId === 'guest@ganachly.com' || userId.includes('guest')) return;
-  try {
-    const userRef = doc(db, 'users', userId);
-    await setDoc(userRef, {
-      cart: sanitizeForFirestore(cartItems),
-      cartUpdatedAt: Date.now()
-    }, { merge: true });
-    console.info(`[Firebase] Cart cache (${cartItems.length} items) saved for ${userId}`);
-  } catch (err) {
-    console.debug('[Firebase] Cart cloud cache notice:', err.message);
-  }
-}
-
-/**
- * Retrieve cached cart from Firestore
- */
-export async function getUserCartFromFirestore(userId) {
-  if (!userId || userId === 'guest@ganachly.com' || userId.includes('guest')) return [];
-  try {
-    const userRef = doc(db, 'users', userId);
-    const snap = await getDoc(userRef);
-    if (snap.exists()) {
-      const data = snap.data();
-      if (Array.isArray(data.cart) && data.cart.length > 0) {
-        return data.cart;
-      }
-    }
-  } catch (err) {
-    console.debug('[Firebase] Cart cloud retrieval notice:', err.message);
-  }
-  return [];
-}
-
-/**
- * Clear cached cart in Firestore once order is placed
- */
-export async function clearUserCartInFirestore(userId) {
-  if (!userId || userId === 'guest@ganachly.com' || userId.includes('guest')) return;
-  try {
-    const userRef = doc(db, 'users', userId);
-    await setDoc(userRef, {
-      cart: [],
-      cartUpdatedAt: Date.now()
-    }, { merge: true });
-    console.info(`[Firebase] Cloud cart cache cleared for ${userId} following order placement.`);
-  } catch (err) {
-    console.debug('[Firebase] Cart cloud clear notice:', err.message);
-  }
-}
 
 /**
  * Upload a product image File to Firebase Storage and return the public download URL.

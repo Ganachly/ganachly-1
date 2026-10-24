@@ -1,13 +1,10 @@
 import './css/main.css';
 import { store } from './state/store.js';
 import { auth } from './auth/auth.js';
-import { initGoogleAuth, dismissGoogleOneTap } from './auth/googleAuth.js';
 import { renderStorefrontHeader, attachStorefrontHeaderEvents } from './components/header.js';
 import { renderStorefrontFooter } from './components/footer.js';
 import { renderAdminSidebar, attachAdminSidebarEvents } from './components/adminSidebar.js';
 import { renderAdminHeader, attachAdminHeaderEvents } from './components/adminHeader.js';
-import { renderCartDrawer } from './components/cartDrawer.js';
-import { renderIdentityModal } from './components/identityModal.js';
 import { openProductDetailModal } from './components/productDetailModal.js';
 import { showToast } from './components/toast.js';
 
@@ -24,11 +21,8 @@ import { renderAdminCatalogPage, attachAdminCatalogPageEvents } from './pages/ad
 import { renderAdminPatronsPage, attachAdminPatronsPageEvents } from './pages/adminPatronsPage.js';
 import { renderAdminGiftingPage, attachAdminGiftingPageEvents } from './pages/adminGiftingPage.js';
 import { renderAdminLoginPage, attachAdminLoginPageEvents } from './pages/adminLoginPage.js';
-import { renderLoginPage, attachLoginPageEvents } from './pages/loginPage.js';
 
-// Expose global drawer & modal helpers
-window.openCartDrawer = renderCartDrawer;
-window.openIdentityModal = renderIdentityModal;
+// Expose global modal & toast helpers
 window.openProductDetailModal = openProductDetailModal;
 window.showToast = showToast;
 
@@ -47,8 +41,6 @@ function renderRoute() {
 
   // 1. ADMIN ROUTES
   if (cleanHash.startsWith('#/admin')) {
-    dismissGoogleOneTap();
-
     // If unauthenticated / not admin, render dedicated Admin Login directly on /admin
     if (!auth.isAdmin()) {
       document.title = 'Admin Login • Ganachly Operations';
@@ -140,10 +132,6 @@ function renderRoute() {
     pageTitle = 'Corporate & Luxury Gifting';
     storefrontPageContent = renderGiftingPage();
     attachStorefrontEventsFn = attachGiftingPageEvents;
-  } else if (cleanHash === '#/login' || cleanHash === '#/signin') {
-    pageTitle = 'Authentication & Identity Portal';
-    storefrontPageContent = renderLoginPage();
-    attachStorefrontEventsFn = attachLoginPageEvents;
   } else if (cleanHash === '#/my-orders' || cleanHash === '#/track') {
     pageTitle = 'My Orders';
     storefrontPageContent = renderMyOrdersPage();
@@ -179,11 +167,6 @@ window.addEventListener('hashchange', renderRoute);
 // Listen to state store mutations (cross-tab sync & in-tab updates)
 let reRenderDebounceTimer = null;
 store.subscribe((event) => {
-  // Update header cart badge without full re-render if present
-  const badge = document.getElementById('headerCartBadge');
-  if (badge) {
-    badge.textContent = store.getCartCount();
-  }
 
   // Smoothly refresh admin or tracking page, but protect active user interactions
   const hash = window.location.hash || '';
@@ -192,7 +175,6 @@ store.subscribe((event) => {
     const isModalOpen = document.querySelector('#product-modal.flex') || 
                         document.querySelector('#productModalBackdrop') ||
                         document.querySelector('#confirmationBackdrop') ||
-                        document.querySelector('#identityModalBackdrop') ||
                         document.querySelector('#newBatchBackdrop') ||
                         document.querySelector('#batchModalContainer > div');
     const isUserTyping = document.activeElement && 
@@ -218,7 +200,6 @@ function boot() {
   if (hasBooted) return;
   hasBooted = true;
   renderRoute();
-  initGoogleAuth();
 }
 
 if (document.readyState === 'complete' || document.readyState === 'interactive') {

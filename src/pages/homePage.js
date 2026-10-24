@@ -20,8 +20,9 @@ window.handleQuickAdd = function(productName, price) {
   }) || products[0];
 
   if (!matched) return;
-  store.addToCart(matched.id, 1);
-  showToast(`${matched.title} (₹${matched.price}) added to bag`, 'add_shopping_cart', 'Batch reserved for evening run');
+  if (typeof window.openProductDetailModal === 'function') {
+    window.openProductDetailModal(matched.id);
+  }
 };
 
 export function attachHomePageEvents() {
@@ -34,13 +35,7 @@ export function attachHomePageEvents() {
     if (path === 'menu') link.href = '#/menu';
     else if (path === 'our-story') link.href = '#/story';
     else if (path === 'gifting-and-bulk') link.href = '#/gifting';
-    else if (path === 'cart-and-checkout') {
-      link.href = '#';
-      link.onclick = (e) => {
-        e.preventDefault();
-        window.openCartDrawer();
-      };
-    }
+    else if (path === 'cart-and-checkout') link.href = '#/menu';
   });
 
   // Dynamically populate Nightly Selection grid from store / Firebase
@@ -95,24 +90,14 @@ export function attachHomePageEvents() {
                 <span class="text-[10px] text-on-surface-variant tracking-wider uppercase block">Fresh Bake</span>
                 <span class="font-label-price text-lg text-primary font-bold">₹${product.price}</span>
               </div>
-              <button class="btn-quick-add-cart inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-high hover:bg-primary hover:text-espresso-deep text-gold-cream font-label-action text-xs tracking-wider uppercase font-bold transition-all shadow-sm" data-id="${product.id}">
-                <span class="material-symbols-outlined text-[16px]">add</span>
-                <span>ADD</span>
-              </button>
+              <a href="https://wa.me/919810757880?text=Hello%20Ganachly,%20I%20would%20like%20to%20order%20${encodeURIComponent(product.title)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-whatsapp-green hover:brightness-110 text-white font-label-action text-xs tracking-wider uppercase font-bold transition-all shadow-sm">
+                <span class="material-symbols-outlined text-[16px]">chat</span>
+                <span>Order</span>
+              </a>
             </div>
           </div>
         </div>
       `).join('');
-
-      grid.querySelectorAll('.btn-quick-add-cart').forEach(btn => {
-        btn.onclick = (e) => {
-          e.preventDefault();
-          const id = btn.getAttribute('data-id');
-          store.addToCart(id, 1);
-          const p = store.getProductById(id);
-          showToast(`${p ? p.title : 'Item'} added to bag`, 'add_shopping_cart', 'Fresh Couverture Bake');
-        };
-      });
     }
   }
 

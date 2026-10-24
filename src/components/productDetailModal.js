@@ -77,10 +77,10 @@ export function openProductDetailModal(productId) {
               </button>
             </div>
 
-            <button id="modalAddOrderBtn" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-hover to-primary-container text-espresso-deep font-label-action text-xs uppercase tracking-widest font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-1.5">
-              <span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
-              <span id="modalAddBtnText">Add (₹${product.price})</span>
-            </button>
+            <a id="modalWhatsAppOrderBtn" href="https://wa.me/919810757880?text=Hello%20Chef%20Hardik,%20I%20would%20like%20to%20order%201x%20${encodeURIComponent(product.title)}%20(₹${product.price})" target="_blank" rel="noopener noreferrer" class="flex-1 py-3 rounded-xl bg-whatsapp-green text-white font-label-action text-xs uppercase tracking-widest font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px]">chat</span>
+              <span id="modalAddBtnText">Order on WhatsApp (₹${product.price})</span>
+            </a>
           </div>
         </div>
 
@@ -92,7 +92,7 @@ export function openProductDetailModal(productId) {
 
   const closeBtn = document.getElementById('closeProductDetailModal');
   const backdrop = document.getElementById('productModalBackdrop');
-  const addBtn = document.getElementById('modalAddOrderBtn');
+  const whatsappBtn = document.getElementById('modalWhatsAppOrderBtn');
   const minusBtn = document.getElementById('modalQtyMinus');
   const plusBtn = document.getElementById('modalQtyPlus');
   const qtyDisplay = document.getElementById('modalQtyDisplay');
@@ -102,6 +102,13 @@ export function openProductDetailModal(productId) {
     modalEl.innerHTML = '';
   };
 
+  const updateWhatsAppHref = () => {
+    if (whatsappBtn && addBtnText) {
+      addBtnText.textContent = `Order on WhatsApp ${selectedQty > 1 ? selectedQty + 'x ' : ''}(₹${product.price * selectedQty})`;
+      whatsappBtn.href = `https://wa.me/919810757880?text=Hello%20Chef%20Hardik,%20I%20would%20like%20to%20order%20${selectedQty}x%20${encodeURIComponent(product.title)}%20(Total:%20₹${product.price * selectedQty})`;
+    }
+  };
+
   if (closeBtn) closeBtn.onclick = close;
   if (backdrop) {
     backdrop.onclick = (e) => {
@@ -109,26 +116,18 @@ export function openProductDetailModal(productId) {
     };
   }
 
-  if (minusBtn && plusBtn && qtyDisplay && addBtnText) {
+  if (minusBtn && plusBtn && qtyDisplay) {
     minusBtn.onclick = () => {
       if (selectedQty > 1) {
         selectedQty--;
         qtyDisplay.textContent = selectedQty;
-        addBtnText.textContent = `Add ${selectedQty} (₹${product.price * selectedQty})`;
+        updateWhatsAppHref();
       }
     };
     plusBtn.onclick = () => {
       selectedQty++;
       qtyDisplay.textContent = selectedQty;
-      addBtnText.textContent = `Add ${selectedQty} (₹${product.price * selectedQty})`;
-    };
-  }
-
-  if (addBtn) {
-    addBtn.onclick = () => {
-      store.addToCart(product.id, selectedQty);
-      showToast(`Added ${selectedQty}x ${product.title} to bag`, 'shopping_bag');
-      close();
+      updateWhatsAppHref();
     };
   }
 }

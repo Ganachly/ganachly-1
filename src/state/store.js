@@ -18,9 +18,6 @@ import {
   saveUserToFirestore,
   getUsersFromFirestore,
   initAuthSessionListener,
-  saveUserCartToFirestore,
-  getUserCartFromFirestore,
-  clearUserCartInFirestore,
   saveGiftingRequestToFirestore,
   deleteGiftingRequestFromFirestore,
   getGiftingRequestsFromFirestore,
@@ -33,7 +30,6 @@ import { normalizeImageUrl } from '../utils/imageUtils.js';
 
 export const STORAGE_KEY = 'ganachly_master_state_v8';
 export const USER_CACHE_KEY = 'ganachly_cached_user';
-export const CART_CACHE_KEY = 'ganachly_persistent_cart';
 const broadcastChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('ganachly_broadcast') : null;
 
 // Wipe legacy mock storage versions if present
@@ -69,7 +65,7 @@ class GanachlyStore {
     }
 
     window.addEventListener('storage', (e) => {
-      if (e.key === STORAGE_KEY || e.key === CART_CACHE_KEY || e.key === USER_CACHE_KEY) {
+      if (e.key === STORAGE_KEY || e.key === USER_CACHE_KEY) {
         this.state = this.loadState();
         this.notifySubscribers();
       }
@@ -89,17 +85,6 @@ class GanachlyStore {
             parsedU.title = 'Master Patissier & Founder';
           }
           cachedUser = parsedU;
-        }
-      }
-    } catch (e) {}
-
-    let cachedCart = [];
-    try {
-      const cachedCartStr = localStorage.getItem(CART_CACHE_KEY);
-      if (cachedCartStr) {
-        const parsedC = JSON.parse(cachedCartStr);
-        if (Array.isArray(parsedC)) {
-          cachedCart = parsedC;
         }
       }
     } catch (e) {}
@@ -154,7 +139,7 @@ class GanachlyStore {
       currentUser: cachedUser || defaultGuestUser,
       products: initialProducts,
       orders: initialOrders,
-      cart: cachedCart || [],
+      cart: [],
       inventory: initialInventory,
       batches: initialBatches,
       deliveryZones: initialDeliveryZones,
@@ -262,23 +247,6 @@ class GanachlyStore {
       userMap.set(user.id, user);
       this.state.users = Array.from(userMap.values());
       saveUserToFirestore(user);
-
-      // Cloud cart sync: if current local cart has items, cache them to user profile in Firestore
-      if (this.state.cart && this.state.cart.length > 0) {
-        saveUserCartToFirestore(user.id, this.state.cart);
-      } else {
-        // If local cart is empty, check if cloud has their saved cart from previous session
-        getUserCartFromFirestore(user.id).then(cloudCart => {
-          if (cloudCart && cloudCart.length > 0 && this.state.cart.length === 0) {
-            this.state.cart = cloudCart;
-            try {
-              localStorage.setItem(CART_CACHE_KEY, JSON.stringify(cloudCart));
-            } catch (e) {}
-            this.saveState();
-            this.notifySubscribers();
-          }
-        });
-      }
     } else {
       // Guest or sign-out: clear cached login memory
       try {
@@ -379,88 +347,28 @@ class GanachlyStore {
     return item;
   }
 
-  // --- CART ---
+  // --- CART (Legacy interface for compatibility) ---
   getCart() {
-    return this.state.cart;
+    return [];
   }
 
   getCartCount() {
-    return this.state.cart.reduce((total, item) => total + item.qty, 0);
+    return 0;
   }
 
   getCartSubtotal() {
-    return this.state.cart.reduce((total, item) => total + (item.price * item.qty), 0);
+    return 0;
   }
 
-  persistCart() {
-    try {
-      localStorage.setItem(CART_CACHE_KEY, JSON.stringify(this.state.cart));
-    } catch (e) {}
-
-    const user = this.getCurrentUser();
-    if (user && user.id && !user.id.includes('guest') && user.id !== 'guest@ganachly.com') {
-      saveUserCartToFirestore(user.id, this.state.cart);
-    }
+  addToCart() {
+    return false;
   }
 
-  clearCachedCart() {
-    try {
-      localStorage.removeItem(CART_CACHE_KEY);
-    } catch (e) {}
+  updateCartQty() {}
 
-    const user = this.getCurrentUser();
-    if (user && user.id && !user.id.includes('guest') && user.id !== 'guest@ganachly.com') {
-      clearUserCartInFirestore(user.id);
-    }
-  }
+  removeFromCart() {}
 
-  addToCart(productId, qty = 1) {
-    const product = this.getProductById(productId);
-    if (!product) return;
-    if (product.stockStatus === 'sold_out') return false;
-
-    const existingIndex = this.state.cart.findIndex(item => item.productId === productId);
-    if (existingIndex > -1) {
-      this.state.cart[existingIndex].qty += qty;
-    } else {
-      this.state.cart.push({
-        productId,
-        title: product.title,
-        price: product.price,
-        image: product.image,
-        weight: product.weight,
-        qty: Math.max(1, qty)
-      });
-    }
-    this.persistCart();
-    this.saveState();
-    return true;
-  }
-
-  updateCartQty(productId, qty) {
-    if (qty <= 0) {
-      this.removeFromCart(productId);
-      return;
-    }
-    const item = this.state.cart.find(c => c.productId === productId);
-    if (item) {
-      item.qty = qty;
-      this.persistCart();
-      this.saveState();
-    }
-  }
-
-  removeFromCart(productId) {
-    this.state.cart = this.state.cart.filter(item => item.productId !== productId);
-    this.persistCart();
-    this.saveState();
-  }
-
-  clearCart() {
-    this.state.cart = [];
-    this.clearCachedCart();
-    this.saveState();
-  }
+  clearCart() {}
 
   // --- ORDERS ---
   getOrders() {

@@ -15,13 +15,7 @@ export function attachGiftingPageEvents() {
     if (path === 'menu') link.href = '#/menu';
     else if (path === 'our-story') link.href = '#/story';
     else if (path === 'gifting-and-bulk') link.href = '#/gifting';
-    else if (path === 'cart-and-checkout') {
-      link.href = '#';
-      link.onclick = (e) => {
-        e.preventDefault();
-        window.openCartDrawer();
-      };
-    }
+    else if (path === 'cart-and-checkout') link.href = '#/menu';
   });
 
   // Hamper quote selection

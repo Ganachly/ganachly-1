@@ -55,7 +55,10 @@ export function attachAdminHeaderEvents() {
   const identityBtn = document.getElementById('adminHeaderIdentityBtn');
   if (identityBtn) {
     identityBtn.onclick = () => {
-      window.openIdentityModal();
+      if (confirm('Sign out of Admin Operations Console?')) {
+        auth.logout();
+        window.location.hash = '#/';
+      }
     };
   }
 
