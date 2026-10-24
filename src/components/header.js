@@ -16,11 +16,10 @@ export function renderStorefrontHeader(activeRoute = '#/') {
         <p class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream uppercase tracking-wider text-[11px] truncate">
           ✦ Handcrafted in Small Batches · 100% Eggless · 70.5% Belgian Callebaut Couverture
         </p>
-        <span class="hidden md:inline text-primary text-[10px]">• Order via WhatsApp</span>
       </div>
 
       <!-- Main Navigation Strip -->
-      <div class="h-16 sm:h-20 max-w-[1280px] mx-auto px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 sm:gap-4">
+      <div class="h-16 sm:h-20 max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 flex items-center justify-between gap-4">
         
         <!-- Brand Name -->
         <div class="flex items-center gap-2 sm:gap-space-md">
@@ -47,19 +46,11 @@ export function renderStorefrontHeader(activeRoute = '#/') {
           ` : ''}
         </nav>
 
-        <!-- Right Side: Direct WhatsApp Order + Mobile Toggle -->
-        <div class="flex items-center gap-space-sm sm:gap-space-md">
-          
-          <a href="https://wa.me/919810757880?text=Hello%20Ganachly,%20I%20would%20like%20to%20order" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 py-2 px-4 rounded-xl bg-whatsapp-green hover:brightness-110 text-white font-label-action text-xs tracking-wider uppercase font-bold transition-all shadow-md">
-            <span class="material-symbols-outlined text-[16px]">chat</span>
-            <span>WhatsApp Order</span>
-          </a>
-
-          <!-- Mobile Menu Hamburger Button -->
-          <button id="mobileNavToggleBtn" class="lg:hidden p-2 rounded-xl bg-card-surface border border-primary/25 text-gold-cream hover:text-primary hover:border-primary transition-all flex items-center justify-center shadow-sm" aria-label="Toggle Navigation Menu">
+        <!-- Mobile Menu Toggle Button (only on smaller screens) -->
+        <div class="lg:hidden flex items-center">
+          <button id="mobileNavToggleBtn" class="p-2 rounded-xl bg-card-surface border border-primary/25 text-gold-cream hover:text-primary hover:border-primary transition-all flex items-center justify-center shadow-sm" aria-label="Toggle Navigation Menu">
             <span class="material-symbols-outlined text-[22px]">menu</span>
           </button>
-
         </div>
 
       </div>
@@ -70,10 +61,6 @@ export function renderStorefrontHeader(activeRoute = '#/') {
         <a class="${isMenu ? 'bg-primary text-espresso-deep font-bold' : 'text-on-surface-variant hover:text-gold-cream bg-surface-container/50'} block px-4 py-2.5 rounded-xl uppercase tracking-wider text-xs transition-colors" href="#/menu">Menu & Formulations</a>
         <a class="${isStory ? 'bg-primary text-espresso-deep font-bold' : 'text-on-surface-variant hover:text-gold-cream bg-surface-container/50'} block px-4 py-2.5 rounded-xl uppercase tracking-wider text-xs transition-colors" href="#/story">Our Story</a>
         <a class="${isGifting ? 'bg-primary text-espresso-deep font-bold' : 'text-on-surface-variant hover:text-gold-cream bg-surface-container/50'} block px-4 py-2.5 rounded-xl uppercase tracking-wider text-xs transition-colors" href="#/gifting">Gifting & Hampers</a>
-        <a class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-whatsapp-green text-white uppercase tracking-wider text-xs font-bold transition-all" href="https://wa.me/919810757880?text=Hello%20Ganachly,%20I%20would%20like%20to%20order" target="_blank" rel="noopener noreferrer">
-          <span class="material-symbols-outlined text-[16px]">chat</span>
-          <span>WhatsApp Quick Order</span>
-        </a>
         ${isAdmin ? `
           <a class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/20 text-primary border border-primary/40 uppercase tracking-wider text-xs font-bold transition-colors" href="#/admin/batches">
             <span class="material-symbols-outlined text-[16px]">oven_gen</span>
