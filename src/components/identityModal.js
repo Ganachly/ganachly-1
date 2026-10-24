@@ -32,10 +32,10 @@ export function renderProfileModal() {
           </div>
           <div>
             <h2 class="font-headline-md text-headline-md text-gold-light uppercase tracking-wide leading-none">
-              Patron Profile & Account Details
+              Customer Profile & Account Details
             </h2>
             <p class="font-editorial-eyebrow text-gold-cream text-[11px] uppercase tracking-widest mt-0.5">
-              Personal coordinates, delivery address & live order telemetry
+              Personal contact info, delivery address & live order status
             </p>
           </div>
         </div>
@@ -56,10 +56,10 @@ export function renderProfileModal() {
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-label-badge uppercase tracking-wider font-bold ${isAdmin ? 'bg-primary text-espresso-deep' : 'bg-secondary text-espresso-deep'}">
                   ${currentUser.role.toUpperCase()}
                 </span>
-                <span class="material-symbols-outlined text-primary text-[16px]" title="Verified Patron">verified</span>
+                <span class="material-symbols-outlined text-primary text-[16px]" title="Verified Customer">verified</span>
               </div>
               <p class="font-body-sm text-xs text-on-surface-variant font-mono mt-0.5">
-                Ref: <span class="text-gold-cream font-bold">${currentUser.code || 'GAN-CUST'}</span> • <span class="text-primary">${currentUser.title || 'Patron'}</span>
+                Ref: <span class="text-gold-cream font-bold">${currentUser.code || 'GAN-CUST'}</span> • <span class="text-primary">${currentUser.title || 'Customer'}</span>
               </p>
               <p class="text-[11px] text-on-surface-variant font-mono truncate max-w-[280px]">
                 ${currentUser.id}
@@ -115,7 +115,7 @@ export function renderProfileModal() {
                   WhatsApp Contact Mobile
                 </span>
                 <p class="font-body-md text-xs font-semibold text-on-surface font-mono">
-                  ${currentUser.phone || '+91 98110 00192'}
+                  ${currentUser.phone || '+91 98107 57880'}
                 </p>
               </div>
 
@@ -126,7 +126,7 @@ export function renderProfileModal() {
                 </span>
                 <p class="font-body-md text-xs font-semibold text-gold-cream flex items-center gap-1.5">
                   <span class="material-symbols-outlined text-primary text-[15px]">location_on</span>
-                  <span>${currentUser.zone || 'Faridabad (Sector 14-21)'}</span>
+                  <span>${currentUser.zone || 'Faridabad (Sector 77)'}</span>
                 </p>
               </div>
 
@@ -149,7 +149,7 @@ export function renderProfileModal() {
                 Primary Delivery Address
               </span>
               <p class="font-body-md text-xs text-on-surface leading-relaxed">
-                ${currentUser.address || 'Pocket A, Sector 14, Faridabad, Haryana - 121007'}
+                ${currentUser.address || 'Sector 77, Faridabad, Haryana'}
               </p>
             </div>
           </div>
@@ -164,7 +164,7 @@ export function renderProfileModal() {
               </div>
               <div>
                 <label class="text-[11px] font-label-badge uppercase text-gold-cream mb-1 block">WhatsApp Mobile</label>
-                <input id="input-edit-phone" type="tel" value="${currentUser.phone || '+91 98110 00192'}" required
+                <input id="input-edit-phone" type="tel" value="${currentUser.phone || '+91 98107 57880'}" required
                   class="w-full px-3 py-2 rounded-lg bg-surface-container text-on-surface text-xs focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/30">
               </div>
             </div>
@@ -173,7 +173,7 @@ export function renderProfileModal() {
               <div>
                 <label class="text-[11px] font-label-badge uppercase text-gold-cream mb-1 block">NCR Delivery Zone</label>
                 <select id="input-edit-zone" class="w-full px-3 py-2 rounded-lg bg-surface-container text-on-surface text-xs focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/30">
-                  <option value="Faridabad" ${currentUser.zone?.includes('Faridabad') ? 'selected' : ''}>Faridabad (Sector 14-21)</option>
+                  <option value="Faridabad" ${currentUser.zone?.includes('Faridabad') ? 'selected' : ''}>Faridabad (Sector 77)</option>
                   <option value="Gurugram" ${currentUser.zone?.includes('Gurugram') ? 'selected' : ''}>Gurugram (Cyber City / Golf Course)</option>
                   <option value="South Delhi" ${currentUser.zone?.includes('Delhi') ? 'selected' : ''}>South Delhi (GK / Defence Colony)</option>
                   <option value="Noida" ${currentUser.zone?.includes('Noida') ? 'selected' : ''}>Noida (Sector 18 / Expressway)</option>
@@ -183,12 +183,12 @@ export function renderProfileModal() {
               <div>
                 <label class="text-[11px] font-label-badge uppercase text-gold-cream mb-1 block">Avatar Persona</label>
                 <select id="input-edit-avatar" class="w-full px-3 py-2 rounded-lg bg-surface-container text-on-surface text-xs focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/30">
-                  <option value="👤" ${currentUser.avatar === '👤' ? 'selected' : ''}>👤 Classic Connoisseur</option>
+                  <option value="👤" ${currentUser.avatar === '👤' ? 'selected' : ''}>👤 Classic Customer</option>
                   <option value="🛍️" ${currentUser.avatar === '🛍️' ? 'selected' : ''}>🛍️ Luxury Shopper</option>
                   <option value="👨‍🍳" ${currentUser.avatar === '👨‍🍳' ? 'selected' : ''}>👨‍🍳 Master Chef</option>
-                  <option value="👑" ${currentUser.avatar === '👑' ? 'selected' : ''}>👑 Royal Patron</option>
+                  <option value="👑" ${currentUser.avatar === '👑' ? 'selected' : ''}>👑 VIP Customer</option>
                   <option value="✨" ${currentUser.avatar === '✨' ? 'selected' : ''}>✨ Ganache Lover</option>
-                  <option value="🍫" ${currentUser.avatar === '🍫' ? 'selected' : ''}>🍫 Couverture Fanatic</option>
+                  <option value="🍫" ${currentUser.avatar === '🍫' ? 'selected' : ''}>🍫 Chocolate Lover</option>
                 </select>
               </div>
             </div>
@@ -196,7 +196,7 @@ export function renderProfileModal() {
             <div>
               <label class="text-[11px] font-label-badge uppercase text-gold-cream mb-1 block">Delivery Street Address</label>
               <textarea id="input-edit-address" rows="2" required
-                class="w-full px-3 py-2 rounded-lg bg-surface-container text-on-surface text-xs focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/30">${currentUser.address || 'Pocket A, Sector 14, Faridabad, Haryana - 121007'}</textarea>
+                class="w-full px-3 py-2 rounded-lg bg-surface-container text-on-surface text-xs focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/30">${currentUser.address || 'Sector 77, Faridabad, Haryana'}</textarea>
             </div>
 
             <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-gold-hover to-primary-container text-espresso-deep font-label-action text-xs uppercase tracking-widest font-bold hover:brightness-110 active:scale-95 transition-all shadow-md">

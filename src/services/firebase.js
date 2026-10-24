@@ -319,11 +319,12 @@ export async function firebaseRegisterOrLogin({ email, password, name, phone, zo
     email: normalizedEmail,
     name: name || (isHardik ? 'Hardik' : normalizedEmail.split('@')[0]),
     role: effectiveRole,
-    phone: phone || (isHardik ? '+91 98110 00192' : '+91 98110 00000'),
+    phone: phone || '+91 98107 57880',
     zone: zone || (isHardik ? 'Faridabad Central Kitchen' : 'Faridabad'),
+    address: address || 'Sector 77, Faridabad, Haryana',
     avatar: isHardik ? '👨‍🍳' : '🍫',
-    title: isHardik ? 'Master Patissier & Founder' : 'Delhi NCR Connoisseur',
-    authProvider: firebaseUser ? 'firebase_email_password' : 'custom_patron',
+    title: isHardik ? 'Master Patissier & Founder' : 'Faridabad',
+    authProvider: firebaseUser ? 'firebase_email_password' : 'custom_customer',
     lastLoginAt: Date.now()
   };
 
@@ -383,7 +384,7 @@ export function initAuthSessionListener(onUserRestored) {
         name: fbUser.displayName || (isHardik ? 'Hardik' : fbUser.email.split('@')[0]),
         role: isHardik ? 'admin' : 'customer',
         avatar: isHardik ? '👨‍🍳' : '🍫',
-        title: isHardik ? 'Master Patissier & Founder' : 'Delhi NCR Connoisseur',
+        title: isHardik ? 'Master Patissier & Founder' : 'Faridabad',
         zone: isHardik ? 'Faridabad Central Kitchen' : 'Faridabad'
       });
     }

@@ -18,6 +18,7 @@
   font-weight: normal;
   text-transform: none !important;
   letter-spacing: 0.02em;
+  overflow: visible;
 }
 
 @layer base {

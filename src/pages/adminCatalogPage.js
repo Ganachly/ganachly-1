@@ -1,4 +1,4 @@
-﻿import { store } from '../state/store.js';
+import { store } from '../state/store.js';
 import { showToast } from '../components/toast.js';
 import { normalizeImageUrl, isGoogleDriveUrl, readFileAsDataUrl } from '../utils/imageUtils.js';
 import { uploadProductImageToStorage } from '../services/firebase.js';
@@ -11,7 +11,7 @@ export function renderAdminCatalogPage() {
       <!-- PAGE HEADER -->
       <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-sm">
         <div>
-          <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-widest text-[11px]">Nocturne Menu & Catalog</span>
+          <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-widest text-[11px]">Bakery Menu & Catalog</span>
           <h1 class="font-headline-lg text-headline-lg text-gold-light mt-1">Confectionery Catalog Manager</h1>
           <p class="font-body-md text-body-md text-on-surface-variant text-sm mt-0.5">
             ${products.length} artisanal formulations · Live pricing and stock allocation across Delhi NCR
@@ -132,7 +132,7 @@ export function renderAdminCatalogPage() {
                 <option value="brookies">Brookies & Cookies</option>
                 <option value="dessert_jars">Cheesecakes & Jars</option>
                 <option value="hampers">Luxury Hampers</option>
-                <option value="beverages">Nocturne Beverages</option>
+                <option value="beverages">Signature Beverages</option>
               </select>
             </div>
           </div>

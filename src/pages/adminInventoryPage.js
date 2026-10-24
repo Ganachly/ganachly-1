@@ -27,7 +27,7 @@ export function renderAdminInventoryPage() {
       <!-- PAGE HEADER -->
       <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-sm">
         <div>
-          <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-widest text-[11px]">Nocturne Kitchen</span>
+          <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-widest text-[11px]">Bakery Kitchen</span>
           <h1 class="font-headline-lg text-headline-lg text-gold-light mt-1">Inventory Couverture Vault</h1>
           <p class="font-body-md text-body-md text-on-surface-variant text-sm mt-0.5">
             ${inventory.length} ingredient vaults · ${totalUsedKg.toFixed(1)} KG consumed this cycle

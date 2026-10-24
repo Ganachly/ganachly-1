@@ -26,12 +26,12 @@ export function renderMyOrdersPage() {
           <div class="inline-flex items-center gap-space-sm px-space-md py-space-xs rounded-full bg-surface-container-high/60 backdrop-blur-md mb-space-md">
             <span class="w-2 h-2 rounded-full bg-whatsapp-green animate-ping"></span>
             <span class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream uppercase tracking-[0.25em]">
-              Real-time Nocturne Telemetry
+              Real-time Order Status
             </span>
           </div>
 
           <h1 class="font-display-hero text-headline-lg md:text-display-hero tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-gold-light via-primary to-primary-container leading-none uppercase mb-space-xs select-none">
-            My Nocturne Orders
+            My Orders
           </h1>
 
           <p class="font-editorial-quote text-body-md text-on-surface-variant italic max-w-lg mx-auto">
@@ -39,7 +39,7 @@ export function renderMyOrdersPage() {
           </p>
         </div>
 
-        <!-- Identity Banner (Shown for logged-in patrons) -->
+        <!-- Identity Banner (Shown for logged-in customers) -->
         ${user && !user.id.includes('guest') ? `
         <div class="p-4 rounded-2xl bg-espresso-panel border border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl mb-8">
           <div class="flex items-center gap-3">
@@ -149,7 +149,7 @@ export function renderMyOrdersPage() {
                         <span class="text-xs text-on-surface-variant uppercase font-label-badge block">Order Total</span>
                         <span class="font-label-price text-xl text-primary font-bold">₹${order.total}</span>
                       </div>
-                      <a href="https://wa.me/919811000192?text=Hi%20Chef%20Hardik,%20inquiring%20about%20my%20order%20%23${order.id}" 
+                      <a href="https://wa.me/919810757880?text=Hi%20Chef%20Hardik,%20inquiring%20about%20my%20order%20%23${order.id}" 
                         target="_blank" class="p-2.5 rounded-xl bg-whatsapp-green/20 text-whatsapp-green hover:bg-whatsapp-green hover:text-espresso-deep transition-all" title="WhatsApp Kitchen Inquiry">
                         <span class="material-symbols-outlined text-[20px]">chat</span>
                       </a>

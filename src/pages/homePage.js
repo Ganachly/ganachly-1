@@ -110,7 +110,7 @@ export function attachHomePageEvents() {
     }
   }
 
-  // --- WHISPER WALL LOGIC ---
+  // --- WHISPER WALL LOGIC (No Location Box) ---
   renderWhisperWall();
   attachWhisperWallEvents();
 }
@@ -123,7 +123,7 @@ function renderWhisperWall() {
   if (!whispers || whispers.length === 0) {
     whisperGrid.innerHTML = `
       <div class="col-span-full py-8 text-center font-editorial-quote text-sm text-on-surface-variant italic">
-        Be the first patron to leave a whisper for our patisserie team!
+        Be the first customer to leave a whisper for our kitchen team!
       </div>
     `;
     return;
@@ -148,9 +148,8 @@ function renderWhisperWall() {
         <div class="pt-space-md mt-space-md flex items-center justify-between border-t border-primary/10">
           <div>
             <h5 class="font-body-md text-sm font-bold text-gold-cream">${w.name}</h5>
-            <span class="font-body-sm text-[11px] text-on-surface-variant">${w.location || 'Delhi NCR'}</span>
           </div>
-          <span class="text-[10px] text-primary font-editorial-eyebrow uppercase border border-primary/20 px-2 py-0.5 rounded-full">Patron Review</span>
+          <span class="text-[10px] text-primary font-editorial-eyebrow uppercase border border-primary/20 px-2 py-0.5 rounded-full">Customer Review</span>
         </div>
       </div>
     `;
@@ -188,11 +187,9 @@ function attachWhisperWallEvents() {
     whisperForm.onsubmit = (e) => {
       e.preventDefault();
       const nameInput = document.getElementById('whisper-name');
-      const locationInput = document.getElementById('whisper-location');
       const commentInput = document.getElementById('whisper-comment');
 
       const name = (nameInput?.value || '').trim();
-      const location = (locationInput?.value || '').trim();
       const comment = (commentInput?.value || '').trim();
 
       if (!name || !comment) {
@@ -202,7 +199,6 @@ function attachWhisperWallEvents() {
 
       store.addWhisper({
         name,
-        location: location || 'Delhi NCR',
         rating: selectedRating,
         comment
       });
@@ -210,10 +206,10 @@ function attachWhisperWallEvents() {
       showToast('Whisper posted successfully!', 'rate_review', 'Thank you for sharing your experience!');
 
       if (nameInput) nameInput.value = '';
-      if (locationInput) locationInput.value = '';
       if (commentInput) commentInput.value = '';
 
       renderWhisperWall();
     };
   }
 }
+

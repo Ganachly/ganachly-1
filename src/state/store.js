@@ -130,7 +130,7 @@ class GanachlyStore {
           inventory: (parsed.inventory || []).filter(i => !['inv-1', 'inv-2', 'inv-3', 'inv-4', 'inv-5', 'inv-6'].includes(i.id)),
           batches: (parsed.batches || []).filter(b => !legacyMockBatches.has(b.id)),
           deliveryZones: parsed.deliveryZones || initialDeliveryZones,
-          whispers: parsed.whispers || initialWhispers,
+          whispers: (parsed.whispers || []).filter(w => !['w-1', 'w-2', 'w-3'].includes(w.id)),
           users: parsed.users || [],
           settings: parsed.settings || {
             cutoffTime: '17:00 IST',
@@ -289,17 +289,17 @@ class GanachlyStore {
     const effectiveRole = isHardik ? 'admin' : (role || 'customer');
     const uniqueCustomerCode = code || (isHardik ? 'ADMIN-GANACHLY-01' : `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`);
     const newUser = {
-      id: id || (isHardik ? 'hardikkush987@gmail.com' : 'patron@ganachly.com'),
+      id: id || (isHardik ? 'hardikkush987@gmail.com' : 'customer@ganachly.com'),
       code: uniqueCustomerCode,
-      name: name || (isHardik ? 'Hardik' : 'Valued Patron'),
-      title: isHardik ? 'Master Patissier & Founder' : 'Delhi NCR Connoisseur',
+      name: name || (isHardik ? 'Hardik' : 'Valued Customer'),
+      title: isHardik ? 'Master Patissier & Founder' : 'Faridabad',
       role: effectiveRole,
       avatar: avatar || (isHardik ? '👨‍🍳' : '🍫'),
       badgeClass: isHardik ? 'bg-primary text-espresso-deep' : 'bg-secondary text-espresso-deep',
-      phone: phone || (isHardik ? '+91 98110 00192' : '+91 98110 00000'),
-      zone: zone || (isHardik ? 'Faridabad Central Kitchen' : 'Delhi NCR'),
-      address: address || 'Faridabad, Delhi NCR',
-      description: isHardik ? 'Full master access: Live Batches, Dispatch Console, Catalog Manager & Stocks.' : `Connoisseur Patron (${uniqueCustomerCode})`
+      phone: phone || '+91 98107 57880',
+      zone: zone || (isHardik ? 'Faridabad Central Kitchen' : 'Faridabad'),
+      address: address || 'Sector 77, Faridabad, Haryana',
+      description: isHardik ? 'Full master access: Live Batches, Dispatch Console, Catalog Manager & Stocks.' : `Customer (${uniqueCustomerCode})`
     };
     this.setCurrentUser(newUser);
     return newUser;
@@ -499,8 +499,8 @@ class GanachlyStore {
 
     const newOrder = {
       id: orderId,
-      customerName: customerName || user.name || 'Patron',
-      customerEmail: customerEmail || user.id || 'patron@ganachly.com',
+      customerName: customerName || user.name || 'Customer',
+      customerEmail: customerEmail || user.id || 'customer@ganachly.com',
       customerId: user.code || `CUST-${Math.floor(1000 + Math.random() * 9000)}`,
       phone: customerPhone || user.phone || '+91 98110 00000',
       serviceType: effectiveServiceType,
@@ -557,12 +557,12 @@ class GanachlyStore {
 
     const newOrder = {
       id: orderId,
-      customerName: name || 'WhatsApp Direct Patron',
+      customerName: name || 'WhatsApp Customer',
       customerEmail: 'whatsapp@direct.order',
       customerId: `WA-${Math.floor(1000 + Math.random() * 9000)}`,
       phone: '+91 WhatsApp Direct',
       zone: zone || 'Faridabad',
-      address: `${zone || 'Faridabad'}, Delhi NCR (Via WhatsApp Direct)`,
+      address: `${zone || 'Sector 77, Faridabad, Haryana'} (Via WhatsApp Direct)`,
       time: new Date(now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) + ' • WhatsApp',
       timestamp: now,
       placedAt: new Date(now).toISOString(),
@@ -864,8 +864,12 @@ class GanachlyStore {
     }
   }
 
-  getPatrons() {
+  getCustomers() {
     return this.state.users || [];
+  }
+
+  getPatrons() {
+    return this.getCustomers();
   }
 
   async refreshUsersFromFirebase() {
@@ -933,8 +937,8 @@ class GanachlyStore {
     }
     const newWhisper = {
       id: 'w-' + Date.now().toString(36) + '-' + Math.floor(100 + Math.random() * 900),
-      name: name || 'Anonymous Connoisseur',
-      location: location || 'Delhi NCR',
+      name: name || 'Anonymous Guest',
+      location: location || 'Faridabad',
       rating: parseInt(rating, 10) || 5,
       comment: comment || '',
       date: 'Just now'

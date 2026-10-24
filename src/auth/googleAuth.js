@@ -45,18 +45,18 @@ export function handleGoogleCredentialResponse(response) {
   // Create or switch to user identity using verified Google details
   const user = auth.loginCustom({
     id: payload.email,
-    name: payload.name || payload.given_name || (isAdmin ? 'Hardik Kushwaha' : 'Connoisseur'),
+    name: payload.name || payload.given_name || (isAdmin ? 'Hardik Kushwaha' : 'Customer'),
     role: isAdmin ? 'admin' : 'customer',
     avatar: payload.picture || (isAdmin ? '👨‍🍳' : '👤'),
     phone: '',
-    zone: isAdmin ? 'Faridabad Central Kitchen' : 'Faridabad (Sector 14-21)'
+    zone: isAdmin ? 'Faridabad Central Kitchen' : 'Faridabad (Sector 77)'
   });
 
   if (isAdmin) {
     showToast(`Welcome Master Patissier Hardik! Signed in via Google.`, 'security');
     window.location.hash = '#/admin/batches';
   } else {
-    showToast(`Welcome, ${user.name}! Signed in via Google.`, 'verified', 'Google OAuth Patron');
+    showToast(`Welcome, ${user.name}! Signed in via Google.`, 'verified', 'Google Account');
     // If on login page, redirect to menu storefront so user can immediately place orders
     if (window.location.hash === '#/login' || window.location.hash === '#/signin') {
       window.location.hash = '#/menu';

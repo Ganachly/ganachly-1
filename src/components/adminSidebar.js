@@ -21,7 +21,7 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
         <!-- Brand Header -->
         <div class="h-16 px-space-lg flex items-center justify-between bg-surface-container-lowest/60 border-b border-primary/10">
           <div class="flex flex-col">
-            <span class="font-brittany text-2xl sm:text-3xl tracking-normal text-primary leading-tight select-none">Ganachly</span>
+            <span class="font-brittany text-2xl sm:text-3xl tracking-normal text-primary leading-normal pb-0.5 inline-block select-none">Ganachly</span>
             <span class="font-editorial-eyebrow text-editorial-eyebrow text-gold-cream tracking-widest uppercase text-[10px]">Kitchen Operations</span>
           </div>
           <div class="flex items-center gap-2">
@@ -50,7 +50,7 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
             <a href="#/admin/orders" class="flex items-center justify-between px-space-md py-2.5 rounded-xl transition-all ${isOrders ? activeClass : inactiveClass}">
               <div class="flex items-center gap-space-sm">
                 <span class="material-symbols-outlined text-[19px]">receipt_long</span>
-                <span class="font-body-md text-body-md tracking-wide">Orders & Concierge</span>
+                <span class="font-body-md text-body-md tracking-wide">Orders & Dispatch</span>
               </div>
               <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold ${isOrders ? 'bg-espresso-deep text-gold-cream' : 'bg-primary/20 text-primary'}">
                 ${kpis.hearthQueueCount}
@@ -60,7 +60,7 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
             <a href="#/admin/patrons" class="flex items-center justify-between px-space-md py-2.5 rounded-xl transition-all ${isPatrons ? activeClass : inactiveClass}">
               <div class="flex items-center gap-space-sm">
                 <span class="material-symbols-outlined text-[19px]">group</span>
-                <span class="font-body-md text-body-md tracking-wide">Patrons & Accounts</span>
+                <span class="font-body-md text-body-md tracking-wide">Customers & Accounts</span>
               </div>
               <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold ${isPatrons ? 'bg-espresso-deep text-gold-cream' : 'bg-primary/20 text-primary'}">
                 ${store.getPatrons().length}
@@ -88,7 +88,7 @@ export function renderAdminSidebar(activeRoute = '#/admin/batches') {
       <div class="p-space-md bg-surface-container-lowest/80 border-t border-primary/10 space-y-2">
         <div class="p-space-sm rounded-xl bg-card-surface/90 flex flex-col gap-1 border border-primary/15">
           <div class="flex items-center justify-between">
-            <span class="font-label-badge text-label-badge text-gold-cream uppercase">Nocturne Couverture</span>
+            <span class="font-label-badge text-label-badge text-gold-cream uppercase">Belgian Couverture</span>
             <span class="font-label-badge text-label-badge text-primary">70.5% Callebaut</span>
           </div>
           <div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1">

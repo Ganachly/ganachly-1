@@ -35,7 +35,7 @@ function renderProductGridItems(filtered) {
         <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4 border border-primary/20">
           <span class="material-symbols-outlined text-3xl">cookie</span>
         </div>
-        <h2 class="font-headline-md text-xl text-gold-light uppercase tracking-wide">Nocturne Hearth In Preparation</h2>
+        <h2 class="font-headline-md text-xl text-gold-light uppercase tracking-wide">Fresh Bakes In Preparation</h2>
         <p class="font-editorial-quote text-sm italic text-gold-cream/80 mt-2 leading-relaxed">
           Our confectionery menu is freshly cleared. Formulate new creations in the Admin Console or sync via Firebase to publish your creations live.
         </p>
@@ -97,7 +97,7 @@ function renderProductGridItems(filtered) {
 
               ${isExclusive ? `
                 <span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-badge-exclusive/20 text-badge-exclusive text-[9px] font-label-badge uppercase tracking-wider backdrop-blur-md border border-badge-exclusive/20">
-                  Nocturne Exclusive
+                  Kitchen Special
                 </span>
               ` : ''}
             </div>

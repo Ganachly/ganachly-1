@@ -67,11 +67,11 @@ function renderRoute() {
     let pageTitle = 'Admin Dashboard';
 
     if (cleanHash === '#/admin/orders') {
-      pageTitle = 'Orders & Concierge';
+      pageTitle = 'Orders & Dispatch';
       adminPageContent = renderAdminOrdersPage();
       attachEventsFn = attachAdminOrdersPageEvents;
     } else if (cleanHash === '#/admin/patrons' || cleanHash === '#/admin/users') {
-      pageTitle = 'Patrons & Accounts Directory';
+      pageTitle = 'Customers & Accounts Directory';
       adminPageContent = renderAdminPatronsPage();
       attachEventsFn = attachAdminPatronsPageEvents;
     } else if (cleanHash === '#/admin/inventory' || cleanHash === '#/admin/inventory-and-couverture-stocks') {
@@ -128,7 +128,7 @@ function renderRoute() {
     storefrontPageContent = renderMenuPage();
     attachStorefrontEventsFn = attachMenuPageEvents;
   } else if (cleanHash === '#/story' || cleanHash === '#/our-story') {
-    pageTitle = 'Our Nocturne Story';
+    pageTitle = 'Our Story';
     storefrontPageContent = renderStoryPage();
     attachStorefrontEventsFn = attachStoryPageEvents;
   } else if (cleanHash === '#/gifting' || cleanHash === '#/gifting-and-bulk') {
@@ -140,7 +140,7 @@ function renderRoute() {
     storefrontPageContent = renderLoginPage();
     attachStorefrontEventsFn = attachLoginPageEvents;
   } else if (cleanHash === '#/my-orders' || cleanHash === '#/track') {
-    pageTitle = 'My Nocturne Orders';
+    pageTitle = 'My Orders';
     storefrontPageContent = renderMyOrdersPage();
     attachStorefrontEventsFn = attachMyOrdersPageEvents;
   } else {

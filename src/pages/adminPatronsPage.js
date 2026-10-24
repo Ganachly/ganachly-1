@@ -94,7 +94,7 @@ function renderPatronRow(patron) {
           <span class="px-2 py-0.2 rounded-full text-[9px] font-label-badge uppercase font-bold ${isAdmin ? 'bg-primary text-espresso-deep' : 'bg-secondary text-espresso-deep'}">
             ${patron.role || 'customer'}
           </span>
-          <span class="text-[10px] font-mono text-primary font-semibold">${patron.code || 'GAN-PATRON'}</span>
+          <span class="text-[10px] font-mono text-primary font-semibold">${patron.code || 'GAN-CUST'}</span>
         </div>
         <div class="flex items-center gap-3 text-xs text-on-surface-variant mt-0.5">
           <span class="font-mono text-[11px] truncate">${patron.email || patron.id}</span>
@@ -147,15 +147,15 @@ export function renderAdminPatronsPage() {
       <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-sm p-5 rounded-2xl bg-espresso-panel border border-primary/15 shadow-xl">
         <div>
           <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-widest text-[11px]">Authentication & Identity Directory</span>
-          <h1 class="font-headline-lg text-headline-lg text-gold-light mt-1">Patrons & Registered Accounts</h1>
+          <h1 class="font-headline-lg text-headline-lg text-gold-light mt-1">Customers & Registered Accounts</h1>
           <p id="patrons-subtitle-count" class="font-body-md text-body-md text-on-surface-variant text-sm mt-0.5">
-            ${totalPatronsCount} authenticated patrons & profiles synced with Firebase Firestore.
+            ${totalPatronsCount} registered customer profiles synced with Firebase Firestore.
           </p>
         </div>
         <div class="flex items-center gap-2">
           <button id="btn-sync-cloud-patrons" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary hover:bg-gold-light text-espresso-deep font-label-action text-xs uppercase tracking-wider font-bold transition-all shadow-sm active:scale-95">
             <span class="material-symbols-outlined text-[16px]">cloud_sync</span>
-            <span>Sync Cloud Patrons</span>
+            <span>Sync Cloud Customers</span>
           </button>
         </div>
       </div>
@@ -164,7 +164,7 @@ export function renderAdminPatronsPage() {
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="p-4 rounded-xl bg-card-surface border border-outline-variant/20 shadow-md flex items-center justify-between">
           <div>
-            <span class="text-[11px] font-label-badge uppercase tracking-wider text-on-surface-variant block">Total Connoisseurs</span>
+            <span class="text-[11px] font-label-badge uppercase tracking-wider text-on-surface-variant block">Total Customers</span>
             <span class="font-headline-lg text-3xl text-gold-cream font-bold mt-1 block">${totalPatronsCount}</span>
             <span class="text-[11px] text-primary mt-0.5 block">Registered profiles in Firebase</span>
           </div>
@@ -175,7 +175,7 @@ export function renderAdminPatronsPage() {
 
         <div class="p-4 rounded-xl bg-card-surface border border-outline-variant/20 shadow-md flex items-center justify-between">
           <div>
-            <span class="text-[11px] font-label-badge uppercase tracking-wider text-on-surface-variant block">Active Ordering Patrons</span>
+            <span class="text-[11px] font-label-badge uppercase tracking-wider text-on-surface-variant block">Active Ordering Customers</span>
             <span class="font-headline-lg text-3xl text-gold-cream font-bold mt-1 block">${customersWithOrders}</span>
             <span class="text-[11px] text-whatsapp-green mt-0.5 block">Placed orders with us</span>
           </div>
@@ -203,13 +203,13 @@ export function renderAdminPatronsPage() {
       <div class="flex flex-wrap items-center gap-space-sm p-space-md bg-espresso-panel rounded-xl border border-primary/10">
         <div class="flex-1 min-w-[220px] relative">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">search</span>
-          <input id="patrons-search" type="text" value="${patronFilters.search}" placeholder="Search patron by name, email, phone, or code…" 
+          <input id="patrons-search" type="text" value="${patronFilters.search}" placeholder="Search customer by name, email, phone, or code…" 
             class="w-full pl-9 pr-4 py-2 rounded-lg bg-surface-container text-on-surface text-sm font-body-md focus:outline-none focus:ring-2 focus:ring-primary/50 border border-outline-variant/20 placeholder-on-surface-variant/50">
         </div>
 
         <select id="patrons-role-filter" class="bg-surface-container text-gold-cream text-sm rounded-lg px-3 py-2 focus:outline-none border border-outline-variant/20">
           <option value="all" ${patronFilters.role === 'all' ? 'selected' : ''}>All Roles</option>
-          <option value="customer" ${patronFilters.role === 'customer' ? 'selected' : ''}>Patrons / Customers</option>
+          <option value="customer" ${patronFilters.role === 'customer' ? 'selected' : ''}>Customers</option>
           <option value="admin" ${patronFilters.role === 'admin' ? 'selected' : ''}>Master Patissier / Admins</option>
         </select>
       </div>
@@ -222,7 +222,7 @@ export function renderAdminPatronsPage() {
               <span class="material-symbols-outlined text-[32px]">person_search</span>
             </div>
             <h3 class="font-headline-sm text-headline-sm text-gold-cream uppercase tracking-wider">
-              No Patrons Found
+              No Customers Found
             </h3>
             <p class="text-on-surface-variant font-body-md text-xs mt-1 max-w-sm">
               As customers authenticate or place orders on the storefront, their profiles will automatically stream here.
@@ -246,10 +246,10 @@ export function attachAdminPatronsPageEvents() {
             <span class="material-symbols-outlined text-[32px]">person_search</span>
           </div>
           <h3 class="font-headline-sm text-headline-sm text-gold-cream uppercase tracking-wider">
-            No Patrons Found
+            No Customers Found
           </h3>
           <p class="text-on-surface-variant font-body-md text-xs mt-1 max-w-sm">
-            No patrons match your search filter.
+            No customers match your search filter.
           </p>
         </div>
       ` : filtered.map(renderPatronRow).join('');
@@ -258,7 +258,7 @@ export function attachAdminPatronsPageEvents() {
     const countSub = document.getElementById('patrons-subtitle-count');
     if (countSub) {
       const filtered = getFilteredPatrons();
-      countSub.textContent = `${filtered.length} authenticated patrons & profiles synced with Firebase Firestore.`;
+      countSub.textContent = `${filtered.length} authenticated customer profiles synced with Firebase Firestore.`;
     }
   }
 
@@ -288,12 +288,12 @@ export function attachAdminPatronsPageEvents() {
       syncBtn.innerHTML = `<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>Syncing...</span>`;
       try {
         await store.refreshUsersFromFirebase();
-        showToast('Patron profiles synced from Firebase', 'cloud_done');
+        showToast('Customer profiles synced from Firebase', 'cloud_done');
       } catch (e) {
-        showToast('Local patrons updated', 'cloud_done');
+        showToast('Local customers updated', 'cloud_done');
       } finally {
         syncBtn.disabled = false;
-        syncBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">cloud_sync</span><span>Sync Cloud Patrons</span>`;
+        syncBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">cloud_sync</span><span>Sync Cloud Customers</span>`;
         refreshPatronsList();
       }
     };

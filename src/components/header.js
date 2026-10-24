@@ -1,4 +1,4 @@
-﻿import { store } from '../state/store.js';
+import { store } from '../state/store.js';
 
 export function renderStorefrontHeader(activeRoute = '#/') {
   const user = store.getCurrentUser();
@@ -29,7 +29,7 @@ export function renderStorefrontHeader(activeRoute = '#/') {
         <!-- Brand Name -->
         <div class="flex items-center gap-2 sm:gap-space-md">
           <a class="flex items-center group" href="#/">
-            <span class="font-brittany text-primary group-hover:text-gold-light transition-colors text-2xl sm:text-3xl md:text-4xl leading-none pt-1 select-none">
+            <span class="font-brittany text-primary group-hover:text-gold-light transition-colors text-2xl sm:text-3xl md:text-4xl leading-normal pt-1 pb-1 inline-block select-none">
               Ganachly
             </span>
           </a>

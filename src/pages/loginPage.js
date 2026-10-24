@@ -24,7 +24,7 @@ export function renderLoginPage() {
 
         <!-- Brand Header & Eyebrow -->
         <a href="#/" class="flex flex-col items-center gap-2 group mb-6 text-center">
-          <h1 class="font-brittany text-4xl sm:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-gold-light via-primary to-primary-container leading-tight pt-1 select-none">
+          <h1 class="font-brittany text-4xl sm:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-gold-light via-primary to-primary-container leading-normal pt-1 pb-3 px-2 select-none">
             Ganachly
           </h1>
           <p class="font-editorial-eyebrow text-gold-cream text-[11px] uppercase tracking-[0.25em]">
@@ -60,10 +60,10 @@ export function renderLoginPage() {
           <!-- Header Titles -->
           <div class="text-center mb-5">
             <h2 class="font-headline-md text-lg text-gold-cream uppercase tracking-wide">
-              Patron & Connoisseur Sign In
+              Customer Sign In
             </h2>
             <p class="font-editorial-quote text-xs text-on-surface-variant italic mt-1">
-              Sign in to place orders, save your delivery preferences, and track live evening bakes.
+              Sign in to place orders, save your delivery preferences, and track your bakes.
             </p>
           </div>
 
@@ -106,7 +106,7 @@ export function renderLoginPage() {
                 </button>
               </div>
               <p class="text-[10px] text-on-surface-variant/70 mt-1">
-                Your permanent connoisseur code for order tracking, invoices, and concierge history.
+                Your customer ID for order tracking, receipts, and order history.
               </p>
             </div>
 
@@ -141,7 +141,7 @@ export function renderLoginPage() {
                 <label for="login-phone-input" class="text-[11px] font-label-badge uppercase text-gold-cream mb-1 block">
                   WhatsApp Mobile
                 </label>
-                <input id="login-phone-input" type="tel" placeholder="+91 98110 00192"
+                <input id="login-phone-input" type="tel" placeholder="+91 98107 57880"
                   class="w-full px-3.5 py-2.5 rounded-lg bg-surface-container text-on-surface text-sm focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/20 placeholder-on-surface-variant/40">
               </div>
               <div>
@@ -149,7 +149,7 @@ export function renderLoginPage() {
                   NCR Delivery Zone
                 </label>
                 <select id="login-zone-input" class="w-full px-3 py-2.5 rounded-lg bg-surface-container text-on-surface text-sm focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/20">
-                  <option value="Faridabad">Faridabad (Sector 14-21)</option>
+                  <option value="Faridabad">Faridabad (Sector 77)</option>
                   <option value="Gurugram">Gurugram (Cyber City)</option>
                   <option value="South Delhi">South Delhi (GK / Def Col)</option>
                   <option value="Noida">Noida (Sector 18 / Expressway)</option>
@@ -159,7 +159,7 @@ export function renderLoginPage() {
             </div>
 
             <button type="submit" id="btn-login-submit" class="w-full mt-4 py-3.5 rounded-xl bg-gradient-to-r from-gold-hover via-primary-container to-primary text-espresso-deep font-label-action text-xs uppercase tracking-widest font-bold hover:brightness-110 active:scale-95 transition-all shadow-[0_4px_16px_rgba(200,151,58,0.25)] flex items-center justify-center gap-2">
-              <span>Sign In as Patron</span>
+              <span>Sign In as Customer</span>
               <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
           </form>
@@ -239,7 +239,7 @@ export function attachLoginPageEvents() {
       const email = document.getElementById('login-email-input')?.value.trim();
       const password = document.getElementById('login-pass-input')?.value.trim();
       const name = document.getElementById('login-name-input')?.value.trim();
-      const phone = document.getElementById('login-phone-input')?.value.trim() || '+91 98110 00192';
+      const phone = document.getElementById('login-phone-input')?.value.trim() || '+91 98107 57880';
       const zone = document.getElementById('login-zone-input')?.value || 'Faridabad';
       const customerId = customerIdInput?.value.trim() || `GAN-CUST-${Math.floor(100000 + Math.random() * 900000)}`;
 
@@ -247,7 +247,7 @@ export function attachLoginPageEvents() {
         showToast('Please enter both email and password', 'error');
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.innerHTML = `<span>Sign In as Patron</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>`;
+          submitBtn.innerHTML = `<span>Sign In as Customer</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>`;
         }
         return;
       }
@@ -260,7 +260,7 @@ export function attachLoginPageEvents() {
         showToast('Master Patissier Admin accounts must log in via the /admin portal.', 'info', 'Admin Portal');
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.innerHTML = `<span>Sign In as Patron</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>`;
+          submitBtn.innerHTML = `<span>Sign In as Customer</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>`;
         }
         window.location.hash = '#/admin';
         return;
@@ -268,7 +268,7 @@ export function attachLoginPageEvents() {
 
       // 2. REGULAR CUSTOMER AUTHENTICATION (any other email & password)
       const customerName = name || email.split('@')[0];
-      const patronUser = auth.loginCustom({
+      const customerUser = auth.loginCustom({
         id: normalizedEmail,
         code: customerId,
         name: customerName,
@@ -289,7 +289,7 @@ export function attachLoginPageEvents() {
         code: customerId
       }).catch(err => console.debug('Firebase customer background sync notice:', err));
 
-      showToast(`Welcome, ${patronUser.name}! Customer ID: ${patronUser.code}`, 'check_circle', `Unique ID: ${patronUser.code}`);
+      showToast(`Welcome, ${customerUser.name}! Customer ID: ${customerUser.code}`, 'check_circle', `Unique ID: ${customerUser.code}`);
       // Redirect to menu storefront so user can immediately place orders
       window.location.hash = '#/menu';
     };

@@ -121,7 +121,7 @@ export function renderAdminOrdersPage() {
       <!-- PAGE HEADER -->
       <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-sm">
         <div>
-          <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-widest text-[11px]">Nocturne Operations</span>
+          <span class="font-editorial-eyebrow text-editorial-eyebrow text-primary uppercase tracking-widest text-[11px]">Kitchen Operations</span>
           <h1 class="font-headline-lg text-headline-lg text-gold-light mt-1">Orders Dispatch Console</h1>
           <p id="orders-subtitle-count" class="font-body-md text-body-md text-on-surface-variant text-sm mt-0.5">${orders.length} total orders · ${orders.filter(o => o.stage !== 'completed').length} in progress</p>
         </div>

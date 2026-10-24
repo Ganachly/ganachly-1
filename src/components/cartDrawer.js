@@ -23,9 +23,9 @@ export function renderCartDrawer() {
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-primary text-[22px]">shopping_bag</span>
             <div class="flex flex-col">
-              <span class="font-headline-sm text-headline-sm text-gold-cream uppercase tracking-wide">Your Nocturne Bag</span>
+              <span class="font-headline-sm text-headline-sm text-gold-cream uppercase tracking-wide">Your Bag</span>
               <span class="font-body-sm text-[11px] text-on-surface-variant font-mono">
-                ${isGuest ? 'Fresh Convection Bakes' : `Order Identity: <strong class="text-primary">${user.name}</strong> (${user.code})`}
+                ${isGuest ? 'Fresh Convection Bakes' : `Customer: <strong class="text-primary">${user.name}</strong> (${user.code})`}
               </span>
             </div>
           </div>
@@ -42,7 +42,7 @@ export function renderCartDrawer() {
                 <span class="material-symbols-outlined text-[32px]">shopping_basket</span>
               </div>
               <p class="font-headline-sm text-headline-sm text-gold-cream uppercase tracking-wider mb-1">Your bag is empty</p>
-              <p class="font-editorial-quote text-body-md italic max-w-xs mb-4">Nocturnal evening bake runs fill up quickly. Add your favorite 70.5% couverture treats.</p>
+              <p class="font-editorial-quote text-body-md italic max-w-xs mb-4">Fresh evening bake runs fill up quickly. Add your favorite 70.5% couverture treats.</p>
               <a href="#/menu" id="btn-explore-menu-from-cart" class="px-5 py-2.5 rounded-xl bg-primary text-espresso-deep font-label-action text-label-action uppercase tracking-widest font-bold hover:brightness-110 transition-all">
                 Explore Menu
               </a>
@@ -100,7 +100,7 @@ export function renderCartDrawer() {
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Patron Name</label>
+                  <label class="font-body-sm text-[11px] text-on-surface-variant uppercase tracking-wider block mb-1">Customer Name</label>
                   <input type="text" id="checkoutNameInput" value="${patronName}" placeholder="Full Name"
                     class="w-full px-3 py-1.5 rounded-lg bg-espresso-panel border border-outline-variant/40 text-on-surface font-body-sm text-body-sm focus:outline-none focus:border-primary">
                 </div>
@@ -150,7 +150,7 @@ export function renderCartDrawer() {
 
             <button id="btnPlaceOrderSubmit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-gold-hover via-primary-container to-primary text-espresso-deep font-label-action text-label-action tracking-[0.18em] uppercase font-bold hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_8px_24px_rgba(200,151,58,0.25)] flex items-center justify-center gap-2">
               <span class="material-symbols-outlined text-[19px]">local_fire_department</span>
-              <span>Confirm & Place Nocturne Order</span>
+              <span>Confirm & Place Order</span>
             </button>
             <p class="text-center font-editorial-eyebrow text-[10px] text-on-surface-variant/70 uppercase tracking-widest">
               Shift window starts 18:30 IST • 100% Eggless • Belgian Couverture
@@ -220,9 +220,9 @@ export function renderCartDrawer() {
   const placeOrderBtn = document.getElementById('btnPlaceOrderSubmit');
   if (placeOrderBtn) {
     placeOrderBtn.onclick = () => {
-      const customerName = document.getElementById('checkoutNameInput')?.value.trim() || user.name || 'Valued Patron';
+      const customerName = document.getElementById('checkoutNameInput')?.value.trim() || user.name || 'Valued Customer';
       const customerPhone = document.getElementById('checkoutPhoneInput')?.value.trim() || user.phone || '+91 98110 00000';
-      const customerEmail = user.id && !user.id.includes('guest') ? user.id : 'patron@ganachly.com';
+      const customerEmail = user.id && !user.id.includes('guest') ? user.id : 'customer@ganachly.com';
       const serviceType = document.querySelector('input[name="orderServiceType"]:checked')?.value || 'Dine-In';
       const specialNote = document.getElementById('checkoutNoteInput')?.value.trim() || `${serviceType} Order`;
       const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'upi';

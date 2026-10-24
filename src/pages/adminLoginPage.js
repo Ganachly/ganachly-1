@@ -26,7 +26,7 @@ export function renderAdminLoginPage(targetPath = '#/admin/batches') {
               Operations Terminal
             </span>
           </div>
-          <h1 class="font-brittany text-4xl sm:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-gold-light via-primary to-primary-container leading-tight pt-1 select-none">
+          <h1 class="font-brittany text-4xl sm:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-gold-light via-primary to-primary-container leading-normal pt-1 pb-3 px-2 select-none">
             Ganachly
           </h1>
           <span class="font-editorial-eyebrow text-gold-cream text-[11px] uppercase tracking-[0.25em] -mt-1">
@@ -216,9 +216,9 @@ export function attachAdminLoginPageEvents(targetPath = '#/admin/batches') {
         role: 'admin',
         avatar: '👨‍🍳',
         title: 'Master Patissier & Founder',
-        phone: '+91 98110 00192',
+        phone: '+91 98107 57880',
         zone: 'Faridabad Central Kitchen',
-        address: 'Ganachly Nocturne Kitchen, Sector 15, Faridabad'
+        address: 'Ganachly Kitchen, Sector 77, Faridabad, Haryana'
       };
 
       // Set user session in store & local persistent cache
@@ -230,7 +230,7 @@ export function attachAdminLoginPageEvents(targetPath = '#/admin/batches') {
         password: password,
         name: 'Hardik',
         role: 'admin',
-        phone: '+91 98110 00192',
+        phone: '+91 98107 57880',
         zone: 'Faridabad Central Kitchen'
       }).catch(err => {
         console.debug('[Firebase] Admin background sync status:', err?.message);

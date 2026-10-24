@@ -67,7 +67,7 @@ export function attachGiftingPageEvents() {
       `Please share the catalogue and quotation.`;
 
     setTimeout(() => {
-      window.open(`https://wa.me/919811000192?text=${encodeURIComponent(textMessage)}`, '_blank');
+      window.open(`https://wa.me/919810757880?text=${encodeURIComponent(textMessage)}`, '_blank');
     }, 800);
   };
 
