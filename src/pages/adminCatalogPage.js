@@ -1,6 +1,6 @@
 import { store } from '../state/store.js';
 import { showToast } from '../components/toast.js';
-import { normalizeImageUrl, isGoogleDriveUrl, readFileAsDataUrl } from '../utils/imageUtils.js';
+import { normalizeImageUrl, isGoogleDriveUrl, readFileAsDataUrl, isWebpageUrl, scanAndExtractImageFromUrl } from '../utils/imageUtils.js';
 import { uploadProductImageToStorage } from '../services/firebase.js';
 
 export function renderAdminCatalogPage() {
@@ -187,10 +187,10 @@ export function renderAdminCatalogPage() {
 
             <!-- URL Panel (hidden by default) -->
             <div id="img-panel-url" class="hidden">
-              <input id="form-product-image" type="text" placeholder="Paste image URL or Google Drive sharing link&hellip;"
+              <input id="form-product-image" type="text" placeholder="Paste image link, recipe/article URL, or Google Drive link&hellip;"
                 class="w-full px-4 py-2.5 rounded-lg bg-surface-container text-on-surface text-sm focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/20 font-mono text-xs">
               <p class="text-[11px] text-on-surface-variant/75 mt-1 leading-relaxed">
-                Direct image URLs or Google Drive sharing links. Set Drive permission to <b>&ldquo;Anyone with the link can view&rdquo;</b>.
+                Direct image URLs, recipe/webpage links (auto-scanned for featured photo), or Google Drive sharing links.
               </p>
             </div>
 
@@ -312,7 +312,9 @@ export function attachAdminCatalogPageEvents() {
     previewContainer?.classList.add('flex');
   };
 
-  const updateImagePreview = (rawUrl) => {
+  let scanSeq = 0;
+  const updateImagePreview = async (rawUrl) => {
+    const currentSeq = ++scanSeq;
     if (!rawUrl || !rawUrl.trim()) {
       previewContainer?.classList.add('hidden');
       previewContainer?.classList.remove('flex');
@@ -323,10 +325,31 @@ export function attachAdminCatalogPageEvents() {
     }
     const normalized = normalizeImageUrl(rawUrl);
     const isDrive = isGoogleDriveUrl(rawUrl);
+    const isPage = isWebpageUrl(rawUrl);
+
     if (driveBadge) {
       if (isDrive) { driveBadge.classList.remove('hidden'); driveBadge.classList.add('flex'); }
       else { driveBadge.classList.remove('flex'); driveBadge.classList.add('hidden'); }
     }
+
+    if (isPage) {
+      if (imageFinalInput) imageFinalInput.value = normalized;
+      showPreview(null, 'Scanning page for image...');
+      if (previewStatus) {
+        previewStatus.textContent = 'Scanning webpage for product photo...';
+        previewStatus.style.color = '#eab308';
+      }
+      try {
+        const extracted = await scanAndExtractImageFromUrl(rawUrl);
+        if (currentSeq !== scanSeq) return;
+        if (extracted && !isWebpageUrl(extracted)) {
+          if (imageFinalInput) imageFinalInput.value = extracted;
+          showPreview(extracted, '✓ Scanned from webpage');
+          return;
+        }
+      } catch (err) {}
+    }
+
     if (imageFinalInput) imageFinalInput.value = normalized;
     showPreview(normalized, isDrive ? 'Google Drive Image' : 'Image Preview');
   };
@@ -411,11 +434,23 @@ export function attachAdminCatalogPageEvents() {
 
   // Handle Form Submit
   if (form) {
-    form.onsubmit = (e) => {
+    form.onsubmit = async (e) => {
       e.preventDefault();
       const id = document.getElementById('form-product-id').value;
       // Use the hidden final field (set by both upload and URL paths)
-      const rawImage = (imageFinalInput?.value || imageUrlInput?.value || '').trim();
+      let rawImage = (imageFinalInput?.value || imageUrlInput?.value || '').trim();
+
+      // If a raw webpage link was submitted, auto-extract the featured image before saving
+      if (isWebpageUrl(rawImage)) {
+        showToast('Scanning page for product photo...', 'sync');
+        try {
+          const scanned = await scanAndExtractImageFromUrl(rawImage);
+          if (scanned && !isWebpageUrl(scanned)) {
+            rawImage = scanned;
+          }
+        } catch (err) {}
+      }
+
       const finalImage = rawImage.startsWith('data:') ? rawImage
         : (normalizeImageUrl(rawImage) || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80');
 

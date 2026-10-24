@@ -1,7 +1,8 @@
 /**
  * Ganachly Image Utilities
- * Advanced image URL scanner, normalizer, and multi-tier fallback engine.
+ * Advanced image URL scanner, normalizer, webpage scraper, and multi-tier fallback engine.
  * Supports:
+ * - Direct image scanning from article / webpage URLs (e.g. blog posts, recipe pages, cake shop links)
  * - Google Drive (view, share, uc, open, thumbnail, folder) -> direct Google CDN
  * - Google Search / imgres / url redirect links -> decoded direct target URL
  * - Unsplash web page links -> direct Unsplash CDN image
@@ -47,19 +48,15 @@ export function getCategoryFallbackImage(category = '') {
 export function extractDriveFileId(url) {
   if (!url || typeof url !== 'string') return null;
 
-  // Format: /file/d/{id} or /d/{id}
   const fileMatch = url.match(/\/d\/([a-zA-Z0-9_-]{12,})/i);
   if (fileMatch) return fileMatch[1];
 
-  // Format: /folders/{id}
   const folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]{12,})/i);
   if (folderMatch) return folderMatch[1];
 
-  // Format: ?id={id} or &id={id} or open?id={id} or uc?id={id}
   const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]{12,})/i);
   if (idMatch) return idMatch[1];
 
-  // Format: googleusercontent.com/d/{id}
   const lh3Match = url.match(/googleusercontent\.com\/d\/([a-zA-Z0-9_-]{12,})/i);
   if (lh3Match) return lh3Match[1];
 
@@ -72,6 +69,107 @@ export function extractDriveFileId(url) {
 export function isGoogleDriveUrl(url) {
   if (!url || typeof url !== 'string') return false;
   return url.includes('drive.google.com') || url.includes('docs.google.com') || url.includes('googleusercontent.com/d/');
+}
+
+/**
+ * Checks if a URL points to an HTML webpage rather than a direct image file.
+ */
+export function isWebpageUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const clean = url.trim();
+  if (!/^https?:\/\//i.test(clean)) return false;
+  if (clean.startsWith('data:')) return false;
+  if (isGoogleDriveUrl(clean)) return false;
+
+  // Direct image file extensions
+  if (/\.(jpe?g|png|webp|gif|svg|avif|ico)(\?.*)?$/i.test(clean)) return false;
+
+  // Known image CDNs that might omit extensions
+  if (clean.includes('images.unsplash.com') || clean.includes('i.imgur.com') || clean.includes('res.cloudinary.com')) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * In-memory scan cache to prevent duplicate network fetches
+ */
+const scannedImageCache = new Map();
+
+/**
+ * Scans an external webpage URL (recipe, blog, or shop) and extracts its main product/featured image.
+ */
+export async function scanAndExtractImageFromUrl(rawUrl) {
+  if (!rawUrl || typeof rawUrl !== 'string') return null;
+  const targetUrl = normalizeImageUrl(rawUrl);
+  if (!isWebpageUrl(targetUrl)) return targetUrl;
+
+  if (scannedImageCache.has(targetUrl)) {
+    return scannedImageCache.get(targetUrl);
+  }
+
+  const proxies = [
+    (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    (u) => `https://corsproxy.io/?url=${encodeURIComponent(u)}`
+  ];
+
+  for (const makeProxy of proxies) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 4500);
+      const res = await fetch(makeProxy(targetUrl), {
+        signal: controller.signal,
+        headers: { 'Accept': 'text/html,application/xhtml+xml' }
+      });
+      clearTimeout(timer);
+
+      if (!res.ok) continue;
+      const html = await res.text();
+      if (!html || html.length < 50) continue;
+
+      // 1. og:image
+      const ogMatch = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
+                      html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+      let img = ogMatch ? ogMatch[1] : null;
+
+      // 2. twitter:image
+      if (!img) {
+        const twMatch = html.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
+                        html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i);
+        if (twMatch) img = twMatch[1];
+      }
+
+      // 3. link rel="image_src"
+      if (!img) {
+        const linkMatch = html.match(/<link[^>]*rel=["']image_src["'][^>]*href=["']([^"']+)["']/i);
+        if (linkMatch) img = linkMatch[1];
+      }
+
+      // 4. itemprop="image"
+      if (!img) {
+        const itemMatch = html.match(/<meta[^>]*itemprop=["']image["'][^>]*content=["']([^"']+)["']/i);
+        if (itemMatch) img = itemMatch[1];
+      }
+
+      if (img) {
+        // Decode HTML entities
+        img = img.replace(/&amp;/g, '&');
+        // Resolve relative URLs to absolute
+        try {
+          img = new URL(img, targetUrl).href;
+        } catch (e) {}
+
+        scannedImageCache.set(targetUrl, img);
+        return img;
+      }
+    } catch (e) {
+      // Continue to next proxy
+    }
+  }
+
+  // Fallback to the target URL if extraction failed
+  return targetUrl;
 }
 
 /**
@@ -117,7 +215,6 @@ export function normalizeImageUrl(url, category = '') {
   }
 
   // 5. Unsplash page URL -> direct Unsplash image CDN
-  // Example: https://unsplash.com/photos/chocolate-brownie-ABC123xyz or https://unsplash.com/photos/ABC123xyz
   if (clean.includes('unsplash.com/photos/')) {
     const unsplashMatch = clean.match(/unsplash\.com\/photos\/(?:[\w-]+-)?([a-zA-Z0-9_-]{8,})/i);
     if (unsplashMatch && unsplashMatch[1]) {
@@ -126,7 +223,6 @@ export function normalizeImageUrl(url, category = '') {
   }
 
   // 6. Imgur page URL -> direct image link
-  // Example: https://imgur.com/aBcDeFg or https://imgur.com/gallery/aBcDeFg
   if (clean.includes('imgur.com/') && !clean.includes('i.imgur.com')) {
     const imgurMatch = clean.match(/imgur\.com\/(?:gallery\/|a\/)?([a-zA-Z0-9]{5,8})/i);
     if (imgurMatch && imgurMatch[1]) {
@@ -143,9 +239,10 @@ export function normalizeImageUrl(url, category = '') {
 }
 
 /**
- * Smart multi-tier fallback handler for <img> onError events.
- * If a Google Drive link fails on lh3, it automatically tries the Drive thumbnail endpoint,
- * then the uc endpoint, and finally the category-specific fallback image.
+ * Smart multi-tier fallback and recovery handler for <img> onError events.
+ * 1. If Google Drive fails, tries thumbnail endpoint, then uc endpoint.
+ * 2. If it is an article or webpage link, asynchronously scans for og:image/twitter:image.
+ * 3. Final fallback: category-tailored confection image.
  */
 export function handleProductImageError(imgEl, rawEncodedUrl = '', category = '') {
   if (!imgEl) return;
@@ -153,32 +250,53 @@ export function handleProductImageError(imgEl, rawEncodedUrl = '', category = ''
   const attempt = parseInt(imgEl.getAttribute('data-img-attempt') || '0', 10);
   const driveId = extractDriveFileId(originalUrl);
 
-  if (driveId) {
-    if (attempt === 0) {
-      imgEl.setAttribute('data-img-attempt', '1');
-      imgEl.src = `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000`;
-      return;
-    } else if (attempt === 1) {
-      imgEl.setAttribute('data-img-attempt', '2');
-      imgEl.src = `https://drive.google.com/uc?export=view&id=${driveId}`;
-      return;
-    }
+  // Attempt 1: Drive thumbnail
+  if (driveId && attempt === 0) {
+    imgEl.setAttribute('data-img-attempt', '1');
+    imgEl.src = `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000`;
+    return;
   }
 
-  // Final fallback: use category-tailored confection image so it NEVER shows a single repetitive image
+  // Attempt 2: Drive uc export
+  if (driveId && attempt === 1) {
+    imgEl.setAttribute('data-img-attempt', '2');
+    imgEl.src = `https://drive.google.com/uc?export=view&id=${driveId}`;
+    return;
+  }
+
+  // If it's a webpage URL and hasn't been scanned yet
+  if (isWebpageUrl(originalUrl) && attempt === 0) {
+    imgEl.setAttribute('data-img-attempt', '1');
+    scanAndExtractImageFromUrl(originalUrl)
+      .then(extracted => {
+        if (extracted && extracted !== originalUrl && !isWebpageUrl(extracted)) {
+          imgEl.src = extracted;
+        } else {
+          imgEl.onerror = null;
+          imgEl.src = getCategoryFallbackImage(category);
+        }
+      })
+      .catch(() => {
+        imgEl.onerror = null;
+        imgEl.src = getCategoryFallbackImage(category);
+      });
+    return;
+  }
+
+  // Final fallback: use category-tailored confection image
   imgEl.onerror = null;
   imgEl.src = getCategoryFallbackImage(category);
 }
 
-// Expose on global window object for inline HTML onerror handlers
+// Expose on global window object for inline HTML handlers
 if (typeof window !== 'undefined') {
   window.handleProductImageError = handleProductImageError;
   window.normalizeImageUrl = normalizeImageUrl;
+  window.scanAndExtractImageFromUrl = scanAndExtractImageFromUrl;
 }
 
 /**
  * Reads a File object and returns a data: URL string via FileReader.
- * Used for local image file upload preview before upload to Firebase Storage.
  */
 export function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
